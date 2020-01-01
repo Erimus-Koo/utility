@@ -8,10 +8,11 @@ __author__ = 'Erimus'
 import sys
 import cgi
 from wsgiref.simple_server import make_server
-from pyautogui import hotkey, press
+import pyautogui
 
 # ═══════════════════════════════════════════════
-
+pyautogui.FAILSAFE = False  # screen off keep working
+# ═══════════════════════════════════════════════
 
 class PathDispatcher:
     def __init__(self):
@@ -45,10 +46,10 @@ def remote_key(environ, start_response):
         if '_' in key:
             keys = key.split('_')
             msg = f'HOTKEY: {keys}'
-            hotkey(*keys)
+            pyautogui.hotkey(*keys)
         else:
             msg = f'PRESS: {key}'
-            press(key)
+            pyautogui.press(key)
 
     print(msg)
     yield f'{msg}\n'.encode('utf-8')
