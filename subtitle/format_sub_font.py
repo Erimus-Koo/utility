@@ -7,6 +7,7 @@ import os
 import sys
 import logging as log
 import re
+import chardet
 import fire
 
 # ═══════════════════════════════════════════════
@@ -40,7 +41,8 @@ def sub_font_transfer(root=None, file=None, font=font, fs1=fs1, fs2=fs2):
     font_new = f'\\\\fn{font}\\\\'
     size_re = re.compile(r'\\fs\d+?(?=(\\|\}))')
     size_new = f'\\\\fs{fs2}'
-    with open(file, 'r', encoding='utf-8') as f:
+    encoding = chardet.detect(open(file, 'rb').read())['encoding']
+    with open(file, 'r', encoding=encoding) as f:
         for i, line in enumerate(f.readlines()):
             old = line
             if line.startswith('Style'):  # 模式1 整体样式
