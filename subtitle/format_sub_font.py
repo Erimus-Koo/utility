@@ -17,25 +17,47 @@ fs2 = 12  # 副字幕 英文
 
 
 def sub_font_transfer(root=None, file=None, font=font, fs1=fs1, fs2=fs2):
+    # init
+    movie_file_name = None
+    subfile = []
+
     if root is None:
         root = default_root
     log.info(f'{root=}')
+
     if file:
-        file = os.path.join(root, file)
+        subfile.append(os.path.join(root, file))
     else:
         for path, dirs, files in os.walk(root):  # read all files
             for fn in files:
+                if '.msyh.' in fn:
+                    log.info(f'! ! ! Existed: {fn}')
+                    return
                 if fn.endswith('ass'):
                     file = os.path.join(path, fn)  # full path
-                    break
+                    subfile.append(file)
+                if (ext:=fn.split('.')[-1]) in ['mp4', 'mkv', 'avi']:
+                    movie_file_name = fn[:-len(ext)]
             break  # root only
 
-    if not file:
+    if not subfile:
         log.error(f'Not found ass file in path\n{root}')
         return
     else:
-        log.info(f'Reading: {file}')
+        log.info(f'Reading:')
+        [log.info(file) for file in subfile]
 
+    for file in subfile:
+        new_file = sub_format(file)
+        log.info(f'New: {new_file}')
+
+    if len(subfile) == 1 and movie_file_name:
+        same_name = os.path.join(root, movie_file_name + 'msyh.ass')
+        os.rename(new_file, same_name)
+        log.info(f'Final: {same_name}')
+
+
+def sub_format(file):  # operate single sub file
     result = ''
     font_re = re.compile(r'\\fn.+?\\')
     font_new = f'\\\\fn{font}\\\\'
@@ -56,15 +78,16 @@ def sub_font_transfer(root=None, file=None, font=font, fs1=fs1, fs2=fs2):
                 line = size_re.sub(size_new, line)
 
             if old != line:
-                log.info(f'Line: {i+1}')
-                log.info(f'Old | {old}')
-                log.info(f'New | {line}\n---\n')
+                log.debug(f'Line: {i+1}')
+                log.debug(f'Old | {old}')
+                log.debug(f'New | {line}\n---\n')
 
             result += line
 
-    newFile = file[:-4] + '_微软雅黑' + file[-4:]
-    with open(newFile, 'w', encoding='utf-8') as f:
+    new_file = file[:-4] + '_微软雅黑' + file[-4:]
+    with open(new_file, 'w', encoding='utf-8') as f:
         f.write(result)
+    return new_file
 
 
 # ═══════════════════════════════════════════════
