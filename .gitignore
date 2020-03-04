@@ -6,6 +6,9 @@
 *.min.css
 *.min.js
 *.min.json
+temp.py
+Extract_BroadLink_learned_codes_from_iOS_App/
+Hitachi_IR_Code/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
