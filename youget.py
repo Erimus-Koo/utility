@@ -10,7 +10,7 @@ import re
 import fire
 
 # ═══════════════════════════════════════════════
-DEFAULT_PROXY = '127.0.0.1:1080'
+DEFAULT_PROXY = '127.0.0.1:10809'
 
 
 def you_get(url, download_size='min'):
@@ -39,9 +39,11 @@ def you_get(url, download_size='min'):
     os.system(cmd)
 
 
-def main():  # download_size: min, max
-    [print(arg) for arg in sys.argv]
-    urls = [i for i in sys.argv[1:] if i.startswith('http')][::-1]
+def main(*urls):  # download_size: min, max
+    if not urls:
+        print('Please input urls as args.\n>>> youget [url1] [url2] ...')
+        return
+    urls = [i for i in urls if i.startswith('http')][::-1]
     [print(url) for url in urls]
     for url in urls:
         you_get(url)

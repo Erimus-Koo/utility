@@ -10,7 +10,8 @@ import os
 # ═══════════════════════════════════════════════
 
 
-def generate_sidebar(root=None):
+def generate_sidebar(root=None, ignoreFolders=None):
+    ignoreFolders = [] if ignoreFolders is None else ignoreFolders
     if root is None:
         root = os.getcwd()  # the path of command line
 
@@ -25,7 +26,8 @@ def generate_sidebar(root=None):
         indent = fullpath.count('/') * '    '  # indent level
         levels = f'/{fullpath}'.split('/')
         filename = levels[-1]  # get file/folder name
-        if filename.startswith('_sidebar'):  # ignore sidebar file
+        # ignore sidebar file
+        if filename.startswith('_sidebar') or '.assets' in fullpath:
             return
 
         # generate line
@@ -34,20 +36,24 @@ def generate_sidebar(root=None):
         else:  # folder
             line = f'{indent}- **{filename}**'
 
-        # add line to md
+        # add line to public md
         for name in levels:
-            if name.startswith('_') or name.endswith('.assets'):
+            if name.startswith('_'):
                 break
         else:  # all path(self or parent) is not private
             md.append(line)
+
+        # add line to private
+        line = line.replace('**_', '**')  # remove private underscore in display
         md_private.append(line)
 
     for path, dirs, files in os.walk(root):  # read all files
+        dirs[:] = [d for d in dirs if d not in ignoreFolders]
         path_wrote = False
         for fn in files:
             if fn.endswith('md'):
                 # if folder is empty, it need not to be write.
-                if not path_wrote:
+                if not path_wrote and not fn.startswith('_'):
                     add_content(path)
                     path_wrote = True
                 # add md file
@@ -69,4 +75,5 @@ def generate_sidebar(root=None):
 if __name__ == '__main__':
 
     root = 'D:/OneDrive/erimus-koo.github.io/notebook'  # my docsify root
-    generate_sidebar(root)
+    ignoreFolders = ['.git', '上海通']
+    generate_sidebar(root, ignoreFolders)
