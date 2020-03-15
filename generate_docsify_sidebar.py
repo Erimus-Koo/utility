@@ -24,11 +24,12 @@ def generate_sidebar(root=None, ignoreFolders=None):
         if not fullpath:
             return  # skip root
         indent = fullpath.count('/') * '    '  # indent level
-        levels = f'/{fullpath}'.split('/')
+        levels = f'/{fullpath}'.split('/')  # per folder in path
         filename = levels[-1]  # get file/folder name
         # ignore sidebar file
         if filename.startswith('_sidebar') or '.assets' in fullpath:
             return
+        filename = filename[0] + filename[1:].replace('_', ' ')
 
         # generate line
         if fullpath.endswith('.md'):
