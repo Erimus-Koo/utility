@@ -4,6 +4,9 @@ rem you-get 自动走代理且以最小画素下载
 doskey youget = python %~dp0youget.py $*
 
 rem 影视台词拼图
+doskey mergevideo = python %~dp0merge_video.py $*
+
+rem 影视台词拼图
 doskey submerge = python %~dp0image_tools\sub_merge.py $*
 
 rem ass字幕 默认字体改雅黑
