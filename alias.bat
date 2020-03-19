@@ -27,3 +27,6 @@ doskey sidebar = python %~dp0generate_docsify_sidebar.py $*
 
 rem 同步到我的cos 可以跟一个目录名参数
 doskey sync = python D:\OneDrive\05ProgramProject\Python\utilities\private\qcloud\erimuscc.py $*
+
+rem 自动格式化文件 主要是markdown
+doskey fmt = python %~dp0auto_format.py $*
