@@ -30,3 +30,6 @@ doskey sync = python D:\OneDrive\05ProgramProject\Python\utilities\private\qclou
 
 rem 自动格式化文件 主要是markdown
 doskey fmt = python %~dp0auto_format.py $*
+
+rem 自动整理电脑上的琐碎文件
+doskey clean = python %~dp0organize_personal_files.py $*
