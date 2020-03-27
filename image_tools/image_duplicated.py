@@ -69,7 +69,7 @@ def find_duplicate_img(
             file = os.path.join(path, fn)
             # print(file)
             ext = fn.split('.')[-1].lower()  # 扩展名
-            if ext in ['jpg', 'jpeg', 'gif', 'png']:  # if picture
+            if ext in ['jpg', 'jpeg', 'gif', 'png', 'webp']:  # if picture
                 size = os.stat(os.path.join(path, fn)).st_size
                 imageDict[file] = {'fn': fn, 'size': size}
         if rootOnly:

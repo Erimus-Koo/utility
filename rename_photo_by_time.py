@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 __author__ = 'Erimus'
 # 批量备份iPhone的照片及视频，先复制到指定路径，然后运行。
+# 建议使用icloud drive，把手机的照片上传然后同步到电脑。
 # 读取文件的各个时间，取其中最早的时间，以此改名。YYYYmmdd_HHMMSS.ext
 
 import os

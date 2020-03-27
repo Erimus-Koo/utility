@@ -3,7 +3,7 @@
 rem you-get 自动走代理且以最小画素下载
 doskey youget = python %~dp0youget.py $*
 
-rem 影视台词拼图
+rem 合并当前目录下的下载的音视频片段（youtube下载的分离文件）
 doskey mergevideo = python %~dp0merge_video.py $*
 
 rem 影视台词拼图

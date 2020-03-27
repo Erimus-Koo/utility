@@ -15,7 +15,7 @@ top = 0.85  # sub top
 btm = 1  # sub bottom
 
 
-def sub_merge(root=root, top=top, btm=btm):
+def sub_merge(top=top, btm=btm):
     print(f'Merge capture files in "{root}"')
     images = []
     resultName = ''
