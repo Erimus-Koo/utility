@@ -2,8 +2,8 @@
 # -*- coding: utf-8 -*-
 __author__ = 'Erimus'
 # 一些定期运行的计划任务
+# 因为要作为autorun的子进程，所以内部不能再使用多进程。
 
-from multiprocessing import Pool
 from erimus.toolbox import *
 
 # ═══════════════════════════════════════════════
@@ -22,34 +22,31 @@ ten_min_task = {
 }
 hourly_task = {
     'docsify sidebar': cmd(HERE, 'generate_docsify_sidebar.py'),
-    '同步笔记': cmd(PYTHON_ROOT, r'qcloud\erimuscc.py', ' notebook'),
-    '动漫更新': cmd(PYTHON_ROOT, r'Spider\动漫\update_acg.py'),
+    '同步笔记': cmd(MODULE_ERIMUS, r'qcloud\erimuscc.py', ' notebook'),
+    '订阅内容更新': cmd(PYTHON_ROOT, r'Spider\entertainment\update_all.py'),
 }
 # ═══════════════════════════════════════════════
 
 
-def run_python(name, cmd):
-    print(f'[{CSS(PID)}] {name}')
-    os.system(cmd)
+def run_cmd(name, cmd):  # 套壳会导致python进程多一层 后台看着有点乱
+    print(f'[{os.getpid()}] {name}')  # 第一层
+    os.system(cmd)  # 第二层
 
 
 def scheduled_tasks():
     while True:
+        print(f'[{CSS(PID)}] Scheduled Task')
         task_dict = {}
         # 每十分钟运行一次
-        if timestamp() % 600 < 60:
+        if timestamp() % GAP < GAP / 10:
             task_dict.update(ten_min_task)
 
         # 每小时运行一次
         if timestamp() % 3600 < 300:
             task_dict.update(hourly_task)
 
-        if task_dict:
-            p = Pool(len(task_dict))  # 设置进程数
-            for name, file in task_dict.items():
-                p.apply_async(run_python, (name, file))
-            p.close()
-            p.join()
+        for name, cmd in task_dict.items():
+            run_cmd(name, cmd)
 
         # 定时器
         now = timestamp()
