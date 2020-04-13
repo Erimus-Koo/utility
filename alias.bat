@@ -1,5 +1,8 @@
 @echo off
 
+rem 开机自运行服务
+doskey autorun = python %~dp0autorun.py $*
+
 rem you-get 自动走代理且以最小画素下载
 doskey youget = python %~dp0youget.py $*
 
@@ -33,3 +36,9 @@ doskey fmt = python %~dp0auto_format.py $*
 
 rem 自动整理电脑上的琐碎文件
 doskey clean = python %~dp0organize_personal_files.py $*
+
+rem 表情包整理 自动从webp转png
+doskey sticker = python D:\References\sticker\sticker.py $*
+
+rem m3u8下载器
+doskey m3u8 = python D:\OneDrive\05ProgramProject\Python\utilities\private\m3u8.py $*
