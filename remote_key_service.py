@@ -39,21 +39,22 @@ class PathDispatcher:
 def remote_key(environ, start_response):
     start_response('200 OK', [('Content-type', 'text/html')])
     params = environ['params']
+    msg = f'[{os.getpid()}] '
     if 'key' not in environ['params']:
-        msg = 'No Param "key": {environ["params"]}'
+        msg += 'No Param "key": {environ["params"]}'
     else:
         key = environ['params']['key'].lower()
         # play key on local
         if '_' in key:
             keys = key.split('_')
-            msg = f'HOTKEY: {keys}'
+            msg += f'HOTKEY: {keys}'
             pyautogui.hotkey(*keys)
         else:
-            msg = f'PRESS: {key}'
+            msg += f'PRESS: {key}'
             pyautogui.press(key)
 
     print(msg)
-    yield f'[{os.getpid()}] {msg}\n'.encode('utf-8')
+    yield f'{msg}\n'.encode('utf-8')
 
 
 # ═══════════════════════════════════════════════
@@ -87,7 +88,7 @@ Default port 8836, you can define port with argument.
 # ═══════════════════════════════════════════════
 
 
-def init_server(port):
+def init_server(port=8836):
     # Create the dispatcher and register functions
     dispatcher = PathDispatcher()
     dispatcher.register('GET', '/send', remote_key)
