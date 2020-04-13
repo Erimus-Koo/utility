@@ -5,6 +5,7 @@ __author__ = 'Erimus'
 # Use rest api, for example:
 # http://10.0.0.13:8836/send?key=ctrl_a
 
+import os
 import sys
 import cgi
 from wsgiref.simple_server import make_server
@@ -52,7 +53,7 @@ def remote_key(environ, start_response):
             pyautogui.press(key)
 
     print(msg)
-    yield f'{msg}\n'.encode('utf-8')
+    yield f'[{os.getpid()}] {msg}\n'.encode('utf-8')
 
 
 # ═══════════════════════════════════════════════
