@@ -24,7 +24,7 @@ backup_dict = {}  # 已备份的最新文件
 # ═══════════════════════════════════════════════
 SETTINGS_IN_SEPARATE = {
     'listary': os.path.join(APPDATA, 'Listary/UserData/Preferences.json'),
-    'mactype': 'C:/Program Files/MacType/ini/Erimus.ini',
+    'mactype': 'C:/Program Files/MacType/ini/Default.ini',
     'mskeyboard': 'D:/system/Documents/Microsoft Hardware/Macros/end.mhm',
     'musicbee': os.path.join(APPDATA, 'MusicBee/MusicBee3Settings.ini'),
     'setpoint': os.path.join(APPDATA, 'Logitech/SetPoint/user.xml'),
