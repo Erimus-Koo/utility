@@ -13,7 +13,7 @@ import fire
 DEFAULT_PROXY = '127.0.0.1:10809'
 
 
-def you_get(url, download_size='min'):
+def you_get(url, download_size='min', output_dir=None):
     # if proxy
     proxy = f'-x {DEFAULT_PROXY}' if 'youtube' in url else ''
 
@@ -31,7 +31,7 @@ def you_get(url, download_size='min'):
                   reverse=(download_size == 'max'))[0][0]
 
     # download path = command running path
-    path = f'-o {os.getcwd()}'
+    path = f'-o {output_dir or os.getcwd()}'
 
     # download
     cmd = f'you-get {proxy} {url} {itag} {path}'
