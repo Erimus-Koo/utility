@@ -20,9 +20,8 @@ def you_get(url, download_size='min', output_dir=None):
     # find min/max size
     cmd = f'you-get {proxy} {url} -i'
     print(f'RUN COMMAND: {cmd}')
-    p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
-    out, err = p.communicate()
-    out = out.decode('utf-8').replace('\n', '').replace('\r', '')
+    p = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE)
+    out = p.stdout.decode('utf-8').replace('\n', '').replace('\r', '')
     itag_dict = {}
     for i in re.findall(r'\d+ bytes\)\s.*?=\d+', out):
         i = i.split(' ')
