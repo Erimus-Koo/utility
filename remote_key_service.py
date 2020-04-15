@@ -10,22 +10,29 @@ import sys
 import cgi
 from wsgiref.simple_server import make_server
 import pyautogui
+import subprocess
 
 # ═══════════════════════════════════════════════
 pyautogui.FAILSAFE = False  # screen off keep working
+software_dict = {
+    'musicbee': r'"D:\Program Files\MusicBee\MusicBee.exe"',
+    'cloudmusic': r'"C:\Program Files (x86)\Netease\CloudMusic\cloudmusic.exe"',
+    'keepscreen': r'"D:\Softwares\系统相关\KeepDisplayOn 保持亮屏.exe"',
+}
 # ═══════════════════════════════════════════════
+
 
 class PathDispatcher:
     def __init__(self):
-        self.pathmap = { }
+        self.pathmap = {}
 
     def __call__(self, environ, start_response):
         path = environ['PATH_INFO']
         params = cgi.FieldStorage(environ['wsgi.input'],
                                   environ=environ)
         method = environ['REQUEST_METHOD'].lower()
-        environ['params'] = { key: params.getvalue(key) for key in params }
-        handler = self.pathmap.get((method,path), notfound_404)
+        environ['params'] = {key: params.getvalue(key) for key in params}
+        handler = self.pathmap.get((method, path), notfound_404)
         return handler(environ, start_response)
 
     def register(self, method, path, function):
@@ -36,14 +43,14 @@ class PathDispatcher:
 # ═══════════════════════════════════════════════
 
 
-def remote_key(environ, start_response):
+def rest_api(environ, start_response):
     start_response('200 OK', [('Content-type', 'text/html')])
     params = environ['params']
     msg = f'[{os.getpid()}] '
-    if 'key' not in environ['params']:
-        msg += 'No Param "key": {environ["params"]}'
-    else:
-        key = environ['params']['key'].lower()
+
+    # 快捷键部分
+    if 'key' in params:
+        key = params['key'].lower()
         # play key on local
         if '_' in key:
             keys = key.split('_')
@@ -52,6 +59,22 @@ def remote_key(environ, start_response):
         else:
             msg += f'PRESS: {key}'
             pyautogui.press(key)
+        params.pop('key')
+
+    # 开启软件部分
+    if 'open' in params:
+        software = params['open'].lower()
+        if software in software_dict:
+            msg += f'run: {software_dict[software]}'
+            os.startfile(software_dict[software])
+        else:
+            software_list = '\n'.join(software_dict)
+            msg += (f'<pre>\nNot support this software: {software}\n'
+                    f'Supported List:\n{software_list}\n</pre>')
+        params.pop('open')
+
+    if params:  # 还有其它参数
+        msg += f'Not Defined Params: {environ["params"]}'
 
     print(msg)
     yield f'{msg}\n'.encode('utf-8')
@@ -63,6 +86,10 @@ def remote_key(environ, start_response):
 def notfound_404(environ, start_response):
     start_response('200 OK', [('Content-type', 'text/html')])
     info = '''
+<pre>
+
+# Remote Key
+
 Use "pyautogui" play keys, only accept "press" & "hotkey"
 Shortcuts concat by "_", like "ctrl_a".
 
@@ -79,8 +106,18 @@ Read more:
     https://pypi.org/project/PyAutoGUI/
     https://github.com/asweigart/pyautogui/blob/master/pyautogui/_pyautogui_win.py
 
-Default port 8836, you can define port with argument.
+---
 
+# Open Software
+
+    musicbee:     Music Bee
+    cloudmusic:   网易云音乐PC版
+    keepscreen:   Keep Screen On
+
+---
+
+Default port 8836, you can define port with argument.
+</pre>
 '''
     yield info.encode('utf-8')
 
@@ -91,7 +128,7 @@ Default port 8836, you can define port with argument.
 def init_server(port=8836):
     # Create the dispatcher and register functions
     dispatcher = PathDispatcher()
-    dispatcher.register('GET', '/send', remote_key)
+    dispatcher.register('GET', '/api', rest_api)
 
     # Launch a basic server
     httpd = make_server('', port, dispatcher)
