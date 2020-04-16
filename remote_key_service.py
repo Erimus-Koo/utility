@@ -11,13 +11,14 @@ import cgi
 from wsgiref.simple_server import make_server
 import pyautogui
 import subprocess
+import psutil
 
 # ═══════════════════════════════════════════════
 pyautogui.FAILSAFE = False  # screen off keep working
 software_dict = {
     'musicbee': r'"D:\Program Files\MusicBee\MusicBee.exe"',
     'cloudmusic': r'"C:\Program Files (x86)\Netease\CloudMusic\cloudmusic.exe"',
-    'keepscreen': r'"D:\Softwares\系统相关\KeepDisplayOn 保持亮屏.exe"',
+    'keepdisplayon': r'"D:\Softwares\系统相关\KeepDisplayOn 保持亮屏.exe"',
 }
 # ═══════════════════════════════════════════════
 
@@ -38,6 +39,18 @@ class PathDispatcher:
     def register(self, method, path, function):
         self.pathmap[method.lower(), path] = function
         return function
+
+
+# ═══════════════════════════════════════════════
+
+
+def process_exists(pname):
+    for p in psutil.process_iter():
+        try:  # sometime do not has name
+            if pname.lower() in p.name().lower():
+                return True
+        except Exception:
+            pass
 
 
 # ═══════════════════════════════════════════════
@@ -65,8 +78,11 @@ def rest_api(environ, start_response):
     if 'open' in params:
         software = params['open'].lower()
         if software in software_dict:
-            msg += f'run: {software_dict[software]}'
-            os.startfile(software_dict[software])
+            if process_exists(software):
+                msg += f'[{software}] is already running.'
+            else:
+                msg += f'Launch: {software_dict[software]}'
+                os.startfile(software_dict[software])
         else:
             software_list = '\n'.join(software_dict)
             msg += (f'<pre>\nNot support this software: {software}\n'
