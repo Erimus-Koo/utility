@@ -13,7 +13,7 @@ def gym_timer(gap=15):
     gap *= 60  # minutes to seconds
     for i in range(99):
         print(f'[{formatTime()}] Count: {i+1}')
-        beep(1, 'gym_time.mp3')
+        beep(1, 'game_start.mp3')
         now = timestamp()
         countdown(now // gap * gap + gap - now)
 
