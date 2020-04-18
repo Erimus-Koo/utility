@@ -6,23 +6,42 @@ __author__ = 'Erimus'
 
 import os
 from datetime import datetime
+import fire
 
 # ═══════════════════════════════════════════════
 
 
-def trim_video(src_file, clipset, merge=True):
+def fmt_time(time_str):
+    if time_str.count(':') == 1:
+        return datetime.strptime(time_str, '%M:%S')
+    else:
+        return datetime.strptime(time_str, '%H:%M:%S')
+
+
+
+def trim_video(src_file, *clip_points, merge=True):
+    # if '/' in src_file or '\\' in src_file:
     path = os.path.abspath(os.path.dirname(src_file))
+    # else:
+    # path = os.getcwd()
     full_file_name = os.path.basename(src_file)
     file_name, ext = os.path.splitext(full_file_name)
-    print('src_file:', [path, file_name, ext])
+    print(f'{path=}\n{file_name=}\n{ext=}')
 
     out_file = os.path.join(path, f'{file_name}_trim{ext}')
     print(f'{out_file=}')
 
+    clipset = []
+    clip_points += ('23:59:59',)
+    # print(f'{clip_points=}')
+    for i in range((len(clip_points)) // 2):
+        clipset.append([clip_points[i], clip_points[i + 1]])
+    print(f'{clipset=}')
+
     videoList = []
     for i, [start, end] in enumerate(clipset):
-        st = datetime.strptime(start, '%H:%M:%S')
-        et = datetime.strptime(end, '%H:%M:%S')
+        st = fmt_time(start)
+        et = fmt_time(end)
         duration = str(et - st)
         print(f'{duration=}')
         trim_file = os.path.join(path, f'{file_name}_trim{i}{ext}')
@@ -61,10 +80,4 @@ def merge_video(videoList, out_file, removeSrc=False):
 
 if __name__ == '__main__':
 
-    src = 'D:/Downloads/sample.mp4'  # source video
-    clipset = [['0:10:21', '0:15:40'],  # clip1 => start, end
-               # ['1:08:0', '1:22:05'],  # end time can exceed total duration
-               # ['1:59:00', '2:00:40'],
-               ]
-    merge = 1  # if merge clips
-    trim_video(src, clipset, merge)
+    fire.Fire(trim_video)
