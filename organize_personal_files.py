@@ -36,12 +36,14 @@ SETTINGS_IN_SEPARATE = {
 }
 # 备份到下载目录的配置文件。
 # 格式为软件名.特定后缀。e.g.{stylus-2012.json -> stylus.json}
-SETTINGS_IN_DOWNLOAD = ['OmegaOptions.bak',
-                        'potplayer.reg',
-                        'saladict.saladict',
-                        'stylus.json',
-                        'tampermonkey.txt',
-                        'ublock.txt']
+SETTINGS_IN_DOWNLOAD = [
+    'OmegaOptions.bak',
+    'potplayer.reg',
+    'saladict.saladict',
+    'stylus.json',
+    'tampermonkey.txt',
+    'ublock.txt',
+]
 # ═══════════════════════════════════════════════
 
 
