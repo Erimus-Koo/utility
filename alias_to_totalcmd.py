@@ -7,6 +7,7 @@ import os
 
 # ═══════════════════════════════════════════════
 HERE = os.path.abspath(os.path.dirname(__file__))
+PRIVATE = HERE.replace('share', 'private')
 ALIAS = os.path.join(HERE, 'alias.bat')
 USERCMD = 'D:/Program Files/TotalCMD64/usercmd.ini'
 WINCMD = 'D:/Program Files/TotalCMD64/Wincmd.ini'
@@ -21,7 +22,10 @@ def alias_to_totalcmd():
             if line.startswith('doskey'):
                 alias, cmd = line.split('=')
                 alias = alias.replace('doskey', '').strip()
-                cmd = cmd.replace('$*', '').replace('%~dp0', HERE + '\\').strip()
+                cmd = cmd.replace('$*', '')\
+                    .replace('%~dp0', HERE + '\\')\
+                    .replace(r'%private%', PRIVATE + '\\')\
+                    .strip()
                 alias_dict[alias] = cmd
     # printFormatJSON(alias_dict)
 
