@@ -1,6 +1,7 @@
 @echo off
 
-set private = D:\OneDrive\05ProgramProject\Python\utilities\private\
+set private=D:\OneDrive\05ProgramProject\Python\utilities\private\
+rem echo %private%
 
 rem 开机自运行服务
 doskey autorun = python %~dp0autorun.py $*
