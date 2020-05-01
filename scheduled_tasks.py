@@ -7,46 +7,53 @@ __author__ = 'Erimus'
 from erimus.toolbox import *
 
 # ═══════════════════════════════════════════════
-HERE = os.path.abspath(os.path.dirname(__file__))
+ROOT = PYTHON_ROOT
+ERIMUS = MODULE_ERIMUS
+UTIL = MODULE_UTIL
 GAP = 600  # 运行间隔
 # ═══════════════════════════════════════════════
 
 
 def cmd(loc, file, param=''):
-    return 'python ' + os.path.join(loc, file) + param
+    return 'python ' + os.path.join(loc, file + '.py ') + param
 
 
 # ═══════════════════════════════════════════════
-ten_min_task = {
-    'clean': cmd(HERE, 'organize_personal_files.py'),
-}
-hourly_task = {
-    'docsify sidebar': cmd(HERE, 'generate_docsify_sidebar.py'),
-    '同步笔记': cmd(MODULE_ERIMUS, r'qcloud\erimuscc.py', ' notebook'),
-    '订阅内容更新': cmd(PYTHON_ROOT, r'Spider\entertainment\update_all.py'),
-}
-# ═══════════════════════════════════════════════
 
 
-def run_cmd(name, cmd):  # 套壳会导致python进程多一层 后台看着有点乱
+def run_cmd(name, _cmd):  # 套壳会导致python进程多一层 后台看着有点乱
     print(f'[{os.getpid()}] {name}')  # 第一层
-    os.system(cmd)  # 第二层
+    os.system(_cmd)  # 第二层
 
 
 def scheduled_tasks():
     while True:
         print(f'[{CSS(PID)}] Scheduled Task')
+        ts = timestamp()
         task_dict = {}
+        tl = []  # task list
+
         # 每十分钟运行一次
-        if timestamp() % GAP < GAP / 10:
-            task_dict.update(ten_min_task)
+        if ts % GAP < GAP / 2:
+            tl += [{'clean': cmd(UTIL, 'organize_personal_files')}]
 
         # 每小时运行一次
-        if timestamp() % 3600 < 300:
-            task_dict.update(hourly_task)
+        if ts % 3600 < GAP:
+            tl += [{'docsify sidebar': cmd(UTIL, 'generate_docsify_sidebar')}]
+            tl += [{'同步笔记': cmd(ERIMUS, r'qcloud\erimuscc', 'notebook')}]
 
-        for name, cmd in task_dict.items():
-            run_cmd(name, cmd)
+        # 每4小时运行一次
+        if ts % (3600 * 4) < GAP:
+            tl += [{'订阅内容': cmd(ROOT, r'Spider\entertainment\update_all')}]
+
+        # 凌晨0~8点整点确认关闭持续亮屏
+        for i in range(8):
+            if (ts + 3600 * i) % 86400 < GAP:
+                tl += [{'终止亮屏': cmd(UTIL, 'kill_process', 'keepdisplayon')}]
+
+        # 运行命令队列
+        for task in tl:
+            run_cmd(*list(task.items())[0])
 
         # 定时器
         now = timestamp()
