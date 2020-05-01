@@ -12,6 +12,7 @@ from wsgiref.simple_server import make_server
 import pyautogui
 import subprocess
 import psutil
+from util.kill_process import kill_process
 
 # ═══════════════════════════════════════════════
 pyautogui.FAILSAFE = False  # screen off keep working
@@ -88,6 +89,13 @@ def rest_api(environ, start_response):
             msg += (f'<pre>\nNot support this software: {software}\n'
                     f'Supported List:\n{software_list}\n</pre>')
         params.pop('open')
+
+    # 立刻锁屏
+    if 'screen_off' in params:
+        msg += 'turn off screen'
+        kill_process('keepdisplayon')
+        os.popen('nircmd monitor off')
+        params.pop('screen_off')
 
     if params:  # 还有其它参数
         msg += f'Not Defined Params: {environ["params"]}'
