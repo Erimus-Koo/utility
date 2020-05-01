@@ -102,5 +102,5 @@ if __name__ == '__main__':
     log.basicConfig(level=log.INFO, format=('pid:%(process)d | %(message)s'))
 
     root = 'D:/Downloads/photo backup'
-    # root = 'D:/Downloads/temp'
+    root = r'C:\Users\chuan\iCloudDrive\sync\iPhoto'
     rename_photo_by_time(root)
