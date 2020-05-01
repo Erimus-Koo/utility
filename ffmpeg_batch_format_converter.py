@@ -14,6 +14,8 @@ def converter(out_ext='mp3'):
         for fn in files:
             # file = os.path.join(path, fn)  # full path
             name, ext = os.path.splitext(fn)
+            if ext == out_ext:
+                continue
             out = f'{name}.{out_ext}'
             if ext == f'.{out_ext}' or os.path.exists(out):
                 continue
@@ -25,9 +27,7 @@ def converter(out_ext='mp3'):
         break  # root only
 
 
-
 # ═══════════════════════════════════════════════
-
 
 if __name__ == '__main__':
 
