@@ -93,7 +93,8 @@ def rest_api(environ, start_response):
     # 立刻锁屏
     if 'screen_off' in params:
         msg += 'turn off screen'
-        kill_process('keepdisplayon')
+        for _process in ['keepdisplayon', 'musicbee', 'potplayer', 'cloudmusic']:
+            kill_process()
         os.popen('nircmd monitor off')
         params.pop('screen_off')
 
