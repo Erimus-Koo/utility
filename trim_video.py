@@ -18,7 +18,6 @@ def fmt_time(time_str):
         return datetime.strptime(time_str, '%H:%M:%S')
 
 
-
 def trim_video(src_file, *clip_points, merge=True):
     # if '/' in src_file or '\\' in src_file:
     path = os.path.abspath(os.path.dirname(src_file))
@@ -32,7 +31,14 @@ def trim_video(src_file, *clip_points, merge=True):
     print(f'{out_file=}')
 
     clipset = []
-    clip_points += ('23:59:59',)
+    # fix clip points, for input 6 digit number without ':'.
+    clip_points = [str(i) for i in clip_points]
+    print(f'{clip_points=}')
+    for i, c in enumerate(clip_points):
+        if ':' not in c:
+            c = ('000000' + c)[-6:]
+            clip_points[i] = c[0:2] + ':' + c[2:4] + ':' + c[4:6]
+    clip_points += ['23:59:59']
     # print(f'{clip_points=}')
     for i in range((len(clip_points)) // 2):
         clipset.append([clip_points[i], clip_points[i + 1]])
