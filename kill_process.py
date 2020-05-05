@@ -13,7 +13,7 @@ import fire
 def process_exists(pname):
     for p in psutil.process_iter():
         try:  # sometime do not has name
-            if pname.lower() in p.name().lower():
+            if pname.lower() in p.name().lower():  # contains in fullname
                 return {'name': p.name(), 'pid': p.pid}
         except Exception:
             pass
