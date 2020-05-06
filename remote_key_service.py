@@ -98,6 +98,13 @@ def rest_api(environ, start_response):
         os.popen('nircmd monitor off')
         params.pop('screen_off')
 
+    # 语音
+    if 'say' in params:
+        say_content = params['say']
+        msg += f'Say: {say_content}'
+        os.system(f'nircmd speak text "{say_content}"')
+        params.pop('say')
+
     if params:  # 还有其它参数
         msg += f'Not Defined Params: {environ["params"]}'
 
