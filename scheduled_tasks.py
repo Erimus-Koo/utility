@@ -11,6 +11,7 @@ ROOT = PYTHON_ROOT
 ERIMUS = MODULE_ERIMUS
 UTIL = MODULE_UTIL
 GAP = 600  # 运行间隔
+PID = os.getpid()
 # ═══════════════════════════════════════════════
 
 
@@ -47,7 +48,7 @@ def scheduled_tasks():
             tl += [{'订阅内容': cmd(ROOT, r'Spider\entertainment\update_all')}]
 
         # 凌晨0~8点整点确认关闭持续亮屏
-        for i in range(8):
+        for i in range(9):
             if (ts + 3600 * i) % 86400 < GAP:
                 tl += [{'终止亮屏': cmd(UTIL, 'kill_process', 'keepdisplayon')}]
 
