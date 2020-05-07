@@ -51,3 +51,6 @@ doskey m3u8 = python %private%m3u8.py $*
 
 rem 定期起身运动
 doskey gym = python %~dp0gym_timer.py $*
+
+rem 终止进程
+doskey kill = python %~dp0kill_process.py $*

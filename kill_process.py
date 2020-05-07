@@ -11,17 +11,26 @@ import fire
 
 
 def process_exists(pname):
+    r = []
     for p in psutil.process_iter():
         try:  # sometime do not has name
             if pname.lower() in p.name().lower():  # contains in fullname
-                return {'name': p.name(), 'pid': p.pid}
+                r.append({'name': p.name(), 'pid': p.pid})
         except Exception:
             pass
+    return r
 
 
 def kill_process(pname):
-    r = process_exists(pname)
-    if r:
+    # 输入pid
+    if isinstance(pname, int):
+        print(f'PID [{pname}], kill process.')
+        os.kill(pname, signal.SIGINT)
+        return
+
+    # 输入名称
+    pList = process_exists(pname)
+    for r in pList:
         pid = r.get('pid')
         print(f'PID of [{pname}] is [{pid}], kill process.')
         os.kill(pid, signal.SIGINT)
