@@ -41,8 +41,9 @@ def trim_video(src_file, *clip_points, merge=True):
     clip_points += ['23:59:59']
     # print(f'{clip_points=}')
     for i in range((len(clip_points)) // 2):
-        clipset.append([clip_points[i], clip_points[i + 1]])
-    print(f'{clipset=}')
+        clipset.append([clip_points[i * 2], clip_points[i * 2 + 1]])
+    [print(i) for i in clipset]
+    # input('Press enter to continue...')
 
     videoList = []
     for i, [start, end] in enumerate(clipset):
