@@ -15,6 +15,9 @@ doskey mergevideo = python %~dp0merge_video.py $*
 rem 视频剪辑及合并
 doskey trimvideo = python %~dp0trim_video.py $*
 
+rem ffmpeg 格式转化
+doskey videocvt = python %~dp0ffmpeg_format_converter.py $*
+
 rem 影视台词拼图
 doskey submerge = python %~dp0image_tools\sub_merge.py $*
 
