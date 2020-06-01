@@ -34,6 +34,13 @@ def trim_video(src_file, *clip_points, merge=True):
     # fix clip points, for input 6 digit number without ':'.
     clip_points = [str(i) for i in clip_points]
     print(f'{clip_points=}')
+
+    # 检查是否有输入错误 时间乱序
+    int_clip_points = [int(i) for i in clip_points]
+    if int_clip_points != (sorted_int_clip := sorted(int_clip_points)):
+        print(f'CLIP SORTED ERROR !!! \n{int_clip_points=}\n{sorted_int_clip=}')
+        return
+
     for i, c in enumerate(clip_points):
         if ':' not in c:
             c = ('000000' + c)[-6:]
@@ -43,7 +50,7 @@ def trim_video(src_file, *clip_points, merge=True):
     for i in range((len(clip_points)) // 2):
         clipset.append([clip_points[i * 2], clip_points[i * 2 + 1]])
     [print(i) for i in clipset]
-    # input('Press enter to continue...')
+    input('Press enter to continue...')
 
     videoList = []
     for i, [start, end] in enumerate(clipset):
