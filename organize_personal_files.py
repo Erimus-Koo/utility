@@ -20,14 +20,17 @@ TIME = datetime.strftime(datetime.now(), '%Y-%m-%d-%H-%M-%S')  # 当前时间
 # ═══════════════════════════════════════════════
 delete_files = []  # 需要删除的文件
 copy_files = []  # 需要备份的文件
-backup_dict = {}  # 已备份的最新文件
+BACKUP_DICT = {}  # 已备份的最新文件
 # ═══════════════════════════════════════════════
 SETTINGS_IN_SEPARATE = {
+    'cmder': 'D:/Program Files/cmder/config/user-ConEmu.xml',
     'listary': os.path.join(APPDATA, 'Listary/UserData/Preferences.json'),
     'mactype': 'C:/Program Files/MacType/ini/Default.ini',
-    'mskeyboard': 'D:/system/Documents/Microsoft Hardware/Macros/end.mhm',
-    'musicbee': os.path.join(APPDATA, 'MusicBee/MusicBee3Settings.ini'),
+    # 'mskeyboard': 'D:/system/Documents/Microsoft Hardware/Macros/end.mhm',
+    # 'musicbee': os.path.join(APPDATA, 'MusicBee/MusicBee3Settings.ini'),
+    'musicbee': 'D:/Program Files/MusicBee/AppData/MusicBee3Settings.ini',
     'setpoint': os.path.join(APPDATA, 'Logitech/SetPoint/user.xml'),
+    'snipaste': 'D:/Program Files/Snipaste/config.ini',
     'totalcmd': 'D:/Program Files/TotalCMD64/Wincmd.ini',
     'totalcmdusercmd': 'D:/Program Files/TotalCMD64/usercmd.ini',
     'typora': os.path.join(APPDATA, 'Typora/themes/typora_erimus.css'),
@@ -49,7 +52,7 @@ SETTINGS_IN_DOWNLOAD = [
 
 # 返回各个app最新版备份的文件名列表
 def read_backup_file():
-    result = {}
+    result = {}  # {app name: most recent file}
     for path, dirs, files in os.walk(BACKUP_FOLDER):  # read all files
         for fn in files:
             file = os.path.join(path, fn)  # full path
@@ -59,6 +62,9 @@ def read_backup_file():
     for app_name, files in result.copy().items():
         result[app_name] = max(files)  # 以文件名最大的文件为最新文件
     return result
+
+
+BACKUP_DICT = read_backup_file()  # {app name: most recent file}
 
 
 # 比较文件内容是否有改动
@@ -75,10 +81,9 @@ def different(file1, file2):
 
 # 备份设置文件
 def backup_setting_file(setting_path, app_name):
-    global backup_dict
     if not os.path.exists(setting_path):
         print(f'Not exists: {setting_path}')
-    if different(setting_path, backup_dict.get(app_name)):  # 文件有改动时才更新
+    if different(setting_path, BACKUP_DICT.get(app_name)):  # 文件有改动时才更新
         print(f'{app_name.title()} setting updated.')
         fn, ext = os.path.splitext(setting_path)
         target = os.path.join(BACKUP_FOLDER, f'{app_name}_{TIME}{ext}')
@@ -86,9 +91,8 @@ def backup_setting_file(setting_path, app_name):
 
 
 def main():
-    global backup_dict
-    backup_dict = read_backup_file()
-    # [print(v.split('\\')[-1]) for v in backup_dict.values()]
+    # global BACKUP_DICT
+    # [print(v.split('\\')[-1]) for v in BACKUP_DICT.values()]
 
     # 删除torrent文件
     for root, dirname, files in os.walk(BT_DOWNLOAD):
@@ -141,8 +145,21 @@ def main():
     print('finished.')
 
 
-# ═══════════════════════════════════════════════
+def restore_settings():
+    for app_name, target in SETTINGS_IN_SEPARATE.items():
+        if source:=BACKUP_DICT.get(app_name):
+            if not os.path.exists(target):  # 无配置文件
+                print(f'\n"{target}" not exists.')
+                # os.system(f'copy "{source}" "{target}"')
 
+            elif different(source, target):  # 配置文件与备份不同
+                print(f'\n"{source}" different from \n"{target}"')
+                # os.system(f'copy "{source}" "{target}"')
+
+
+# ═══════════════════════════════════════════════
 if __name__ == '__main__':
 
-    main()
+    # main()
+
+    restore_settings()
