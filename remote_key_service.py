@@ -92,10 +92,11 @@ def rest_api(environ, start_response):
 
     # 立刻锁屏
     if 'screen_off' in params:
-        msg += 'turn off screen'
+        msg += 'SCREEN OFF'
         for _process in ['keepdisplayon', 'musicbee', 'potplayer', 'cloudmusic']:
             kill_process(_process)
-        os.popen('nircmd monitor off')
+        os.popen('nircmd monitor off')  # 息屏
+        # os.popen('nircmd standby')  # 进入待机
         params.pop('screen_off')
 
     # 语音
