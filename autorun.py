@@ -6,6 +6,7 @@ from erimus.toolbox import *
 from multiprocessing import Pool
 from util.remote_key_service import init_server as remote_key
 from util.scheduled_tasks import scheduled_tasks
+from util.windows_auto_sound_device import auto_sound_device_control
 
 # ═══════════════════════════════════════════════
 cmd_list = [
@@ -35,6 +36,7 @@ func_list = [
     (print_main_pid, (MAIN_PID,)),
     (http_server, ()),
     (remote_key, ()),
+    (auto_sound_device_control, ()),
     (scheduled_tasks, ()),
 ]
 
