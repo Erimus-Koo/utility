@@ -18,6 +18,9 @@ doskey trimvideo = python %~dp0trim_video.py $*
 rem ffmpeg 格式转化
 doskey videocvt = python %~dp0ffmpeg_format_converter.py $*
 
+rem ffmpeg 音画不同步
+doskey sounddelay = python %~dp0sound_delay.py $*
+
 rem 影视台词拼图
 doskey submerge = python %~dp0image_tools\sub_merge.py $*
 
