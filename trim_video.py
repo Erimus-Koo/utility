@@ -5,6 +5,7 @@ __author__ = 'Erimus'
 # ffmpeg need to be added in PATH
 
 import os
+import re
 from datetime import datetime
 import fire
 
@@ -29,6 +30,17 @@ def trim_video(src_file, *clip_points, merge=True):
 
     out_file = os.path.join(path, f'{file_name}_trim{ext}')
     print(f'{out_file=}')
+
+    # 另一种输入参数的方式
+    if not clip_points:
+        clip_points = []
+        while True:
+            input_param = input('Input clip start & end: ')
+            if input_param == 'end' or not input_param:
+                break
+            else:
+                clip_points += re.findall(r'\d+', input_param)
+        print(f'{clip_points = }')
 
     clipset = []
     # fix clip points, for input 6 digit number without ':'.
@@ -58,7 +70,7 @@ def trim_video(src_file, *clip_points, merge=True):
         et = fmt_time(end)
         duration = str(et - st)
         print(f'{duration=}')
-        trim_file = os.path.join(path, f'{file_name}_trim{i}{ext}')
+        trim_file = os.path.join(path, f'{file_name}_trim{i}{ext}').replace(' ', '_')
         videoList.append(trim_file)
         trimCmd = (f'ffmpeg -ss {start} -t {duration} -i "{src_file}"'
                    f' -vcodec copy -acodec copy "{trim_file}"')
@@ -77,13 +89,14 @@ def merge_video(videoList, out_file, removeSrc=False):
     with open(txt, 'w+', encoding='utf-8') as f:
         for t in videoList:
             t = t.replace('\\', '\\\\')
-            f.write(f'file {t}\n')
-    concatCmd = f'ffmpeg -f concat -safe 0 -i {txt} -c copy {out_file}'
+            f.write(f"file '{t}'\n")
+    txt_trans = txt.replace('\\', '\\\\')
+    concatCmd = f'ffmpeg -f concat -safe 0 -i "{txt_trans}" -c copy "{out_file}"'
     print(f'run> {concatCmd}')
     os.system(concatCmd)
 
     # del temp file
-    os.system(f'del {txt}')
+    # os.system(f'del {txt}')
     if removeSrc:
         for temp in videoList:
             os.system(f'del {temp}')
