@@ -26,6 +26,11 @@ def you_get(url, download_size='min', output_dir=None):
     for i in re.findall(r'\d+ bytes\)\s.*?=\d+', out):
         i = i.split(' ')
         itag_dict[i[-1]] = int(i[0])  # dict[itag] = size
+
+    if not itag_dict:
+        print(f'Request page has some error. ({__name__})')
+        return 'error'
+
     itag = sorted(itag_dict.items(), key=lambda x: x[1],
                   reverse=(download_size == 'max'))[0][0]
 
