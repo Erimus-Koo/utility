@@ -12,8 +12,8 @@ import os
 import re
 
 # ═══════════════════════════════════════════════
-DOWNLOAD = 'D:/Downloads'  # chrome默认下载目录
-BT_DOWNLOAD = 'D:/Downloads/av'  # 影视下载目录
+DOWNLOAD = 'G:/Downloads'  # chrome默认下载目录
+BT_DOWNLOAD = 'G:/Downloads/av'  # 影视下载目录
 BACKUP_FOLDER = 'D:/OneDrive/Misc/setting_backup'  # 设置文件备份目录
 APPDATA = os.getenv('APPDATA')
 TIME = datetime.strftime(datetime.now(), '%Y-%m-%d-%H-%M-%S')  # 当前时间
@@ -90,7 +90,7 @@ def backup_setting_file(setting_path, app_name):
         copy_files.append((setting_path, target))
 
 
-def main():
+def clean():
     # global BACKUP_DICT
     # [print(v.split('\\')[-1]) for v in BACKUP_DICT.values()]
 
@@ -160,6 +160,6 @@ def restore_settings():
 # ═══════════════════════════════════════════════
 if __name__ == '__main__':
 
-    # main()
+    clean()
 
-    restore_settings()
+    # restore_settings()

@@ -19,7 +19,7 @@ pyautogui.FAILSAFE = False  # screen off keep working
 software_dict = {
     'musicbee': r'"D:\Program Files\MusicBee\MusicBee.exe"',
     'cloudmusic': r'"C:\Program Files (x86)\Netease\CloudMusic\cloudmusic.exe"',
-    'keepdisplayon': r'"D:\Softwares\系统相关\KeepDisplayOn 保持亮屏.exe"',
+    'keepdisplayon': r'"D:\OneDrive\Misc\win_tools\KeepDisplayOn 保持亮屏.exe"',
 }
 # ═══════════════════════════════════════════════
 

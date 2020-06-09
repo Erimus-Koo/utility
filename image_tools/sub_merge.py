@@ -9,7 +9,7 @@ from fire import Fire
 from image_rating import read_rating
 
 
-root = 'D:/Downloads/photo backup'
+root = 'G:/Downloads/photo backup'
 # 图片文件结尾加a的输出全图
 top = 0.85  # sub top
 btm = 1  # sub bottom
