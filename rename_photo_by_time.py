@@ -29,6 +29,7 @@ def rename_photo_by_time(root):
     aaeList = []
     for path, dirs, files in os.walk(root):  # read all files
         for fn in files:
+            print(f'{"="*30}\n{fn}')
             fn = fn.lower()
             # 跳过已改名的文件
             year = root.split('/')[-1]
@@ -65,11 +66,13 @@ def rename_photo_by_time(root):
 
             # read metadata
             with open(file, 'rb') as f:
-                rr = re.findall(r'\d{4}[:\-]\d{2}[:\-]\d{2}[T ]\d{2}[:\-]\d{2}[:\-]\d{2}', str(f.read()))
-                for i, iptct in enumerate(rr):
-                    t[f'iptc{i}'] = format_time_str(iptct)
+                try:  # 视频过大时会无法加载
+                    rr = re.findall(r'\d{4}[:\-]\d{2}[:\-]\d{2}[T ]\d{2}[:\-]\d{2}[:\-]\d{2}', str(f.read()))
+                    for i, iptct in enumerate(rr):
+                        t[f'iptc{i}'] = format_time_str(iptct)
+                except OverflowError as e:
+                    print(e)
 
-            print(f'{"="*30}\n{fn}{ext}')
             [print(f'  {k}: {v}') for k,v in t.items()]
             newName = min(t.values())  # most early
 
