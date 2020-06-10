@@ -47,11 +47,6 @@ def scheduled_tasks():
         if ts % (3600 * 4) < GAP:
             tl += [{'订阅内容': cmd(ROOT, r'Spider\entertainment\update_all')}]
 
-        # 凌晨0~8点整点确认关闭持续亮屏
-        for i in range(9):
-            if (ts + 3600 * i) % 86400 < GAP:
-                tl += [{'终止亮屏': cmd(UTIL, 'kill_process', 'keepdisplayon')}]
-
         # 运行命令队列
         for task in tl:
             run_cmd(*list(task.items())[0])
