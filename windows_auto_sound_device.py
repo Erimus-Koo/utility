@@ -28,12 +28,12 @@ def auto_sound_device_control():
                 log.info(f"Keep mute for {now-TIME_LOG['mute']}.\n"
                          f"Play Start at: {TIME_LOG['play']}")
                 SOUND_PLAYING = True
+                request('http://localhost:8836/api?open=keepdisplayon')
 
             log.debug(f"Playing keeps: {now - TIME_LOG['play']}")
 
             if DEVICE_STATUS != True:
                 turn('on', 'switch.amplifier_smart')
-                request('http://localhost:8836/api?open=keepdisplayon')
                 DEVICE_STATUS = True
                 log.info(CSS('Trun sound device on.'))
 
@@ -54,7 +54,6 @@ def auto_sound_device_control():
 
             if gap > MUTE_LIMIT and DEVICE_STATUS != False:
                 turn('off', 'switch.amplifier_smart')
-                kill_process('keepdisplayon')
                 DEVICE_STATUS = False
                 log.info(CSS('Trun sound device off.'))
 
