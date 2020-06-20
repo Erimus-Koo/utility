@@ -58,7 +58,7 @@ def save_as(file, fmt, qlt=80, short_edge=None, force_resave=False):
 
 
 def resave_file():  # remove private information
-    root = 'D:/Downloads/photo backup/'
+    root = 'G:/Downloads/photo backup/'
     for path, dirs, files in os.walk(root):  # read all files
         print(f'=== Path: {path}')
         for name in files:
