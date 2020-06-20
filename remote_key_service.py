@@ -12,6 +12,7 @@ from wsgiref.simple_server import make_server
 import pyautogui
 import subprocess
 import psutil
+import time
 from util.kill_process import kill_process
 
 # ═══════════════════════════════════════════════
@@ -19,7 +20,7 @@ pyautogui.FAILSAFE = False  # screen off keep working
 software_dict = {
     'musicbee': r'"D:\Program Files\MusicBee\MusicBee.exe"',
     'cloudmusic': r'"C:\Program Files (x86)\Netease\CloudMusic\cloudmusic.exe"',
-    'keepdisplayon': r'"D:\OneDrive\Misc\win_tools\KeepDisplayOn 保持亮屏.exe"',
+    'keepdisplayon': r'"D:\OneDrive\Misc\win_tools\KeepDisplayOn.lnk"',
 }
 # ═══════════════════════════════════════════════
 
@@ -143,9 +144,9 @@ Read more:
 
 # Open Software
 
-    musicbee:     Music Bee
-    cloudmusic:   网易云音乐PC版
-    keepscreen:   Keep Screen On
+    musicbee:        Music Bee
+    cloudmusic:      网易云音乐PC版
+    keepdisplayon:   Keep Screen On
 
 ---
 
