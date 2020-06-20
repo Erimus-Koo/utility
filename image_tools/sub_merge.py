@@ -27,7 +27,8 @@ def sub_merge(top=top, btm=btm):
                 continue
             if name.lower().endswith(('.png', '.jpg')):
                 if not resultName:
-                    resultName = 'merge_' + name
+                    fn, ext = os.path.splitext(name)
+                    resultName = 'merge_' + fn + '.jpg'  # 强制保存jpg
                 filename = os.path.join(path, name)
                 images.append(filename)
     print(f'Total {len(images)} files.')
