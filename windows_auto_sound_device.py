@@ -22,7 +22,12 @@ def auto_sound_device_control():
 
     while True:
         now = dTime()
-        if is_windows_playing_sound():  # 播放中
+        try:
+            now_playing = is_windows_playing_sound()
+        except:  # 有可能获取不到或者中止 可能和休眠后恢复有关
+            now_playing = None
+
+        if now_playing is True:  # 播放中
             if SOUND_PLAYING != True:  # 静音 -> 播放
                 TIME_LOG['play'] = now
                 log.info(f"Keep mute for {now-TIME_LOG['mute']}.\n"
@@ -30,14 +35,17 @@ def auto_sound_device_control():
                 SOUND_PLAYING = True
                 request('http://localhost:8836/api?open=keepdisplayon')
 
-            log.debug(f"Playing keeps: {now - TIME_LOG['play']}")
+            gap = now - TIME_LOG['play']
+            log.debug(f"Playing keeps: {gap}")
+            gap = gap.total_seconds()
 
-            if DEVICE_STATUS != True:
+            # 連續兩次檢測到播放 避免微信提示音等極短的音效激活功放
+            if gap > INTERVAL and DEVICE_STATUS != True:
                 turn('on', 'switch.amplifier_smart')
                 DEVICE_STATUS = True
                 log.info(CSS('Trun sound device on.'))
 
-        else:  # 静音中
+        elif now_playing is False:  # 静音中
             if SOUND_PLAYING != False:  # 播放 -> 静音
                 TIME_LOG['mute'] = now
                 log.info(f"Keep play for {now-TIME_LOG['play']}.\n"
@@ -46,9 +54,9 @@ def auto_sound_device_control():
 
             gap = now - TIME_LOG['mute']
             log.debug(f'Mute keeps: {gap}')
-
             gap = gap.total_seconds()
-            if ALERT_LIMIT <= gap < ALERT_LIMIT+INTERVAL:
+
+            if ALERT_LIMIT <= gap < ALERT_LIMIT + INTERVAL:
                 kill_process('keepdisplayon')
                 say('功放即将被关闭')
 
@@ -56,6 +64,9 @@ def auto_sound_device_control():
                 turn('off', 'switch.amplifier_smart')
                 DEVICE_STATUS = False
                 log.info(CSS('Trun sound device off.'))
+
+        elif now_playing is None:  # 发生意外
+            log.warning('WARNING: Can not get the status of sound playing!')
 
         time.sleep(INTERVAL)
 
