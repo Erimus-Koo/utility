@@ -38,6 +38,7 @@ def gym_timer(gap=15, limit=99):
             countdown(gap - timestamp() % gap)
     else:
         print('Gym finished.')
+        time.sleep(10)  # 避免最後的語音被打斷
 
 
 # ═══════════════════════════════════════════════
