@@ -26,11 +26,11 @@ SETTINGS_IN_SEPARATE = {
     'cmder': 'D:/Program Files/cmder/config/user-ConEmu.xml',
     'listary': os.path.join(APPDATA, 'Listary/UserData/Preferences.json'),
     'mactype': 'C:/Program Files/MacType/ini/Default.ini',
-    # 'mskeyboard': 'D:/system/Documents/Microsoft Hardware/Macros/end.mhm',
+    'mskeyboard': 'D:/system/Documents/Microsoft Hardware/Macros/end.mhm',
     # 'musicbee': os.path.join(APPDATA, 'MusicBee/MusicBee3Settings.ini'),
     'musicbee': 'D:/Program Files/MusicBee/AppData/MusicBee3Settings.ini',
     'setpoint': os.path.join(APPDATA, 'Logitech/SetPoint/user.xml'),
-    'snipaste': 'D:/Program Files/Snipaste/config.ini',
+    # 'snipaste': 'D:/Program Files/Snipaste/config.ini',
     'totalcmd': 'D:/Program Files/TotalCMD64/Wincmd.ini',
     'totalcmdusercmd': 'D:/Program Files/TotalCMD64/usercmd.ini',
     'typora': os.path.join(APPDATA, 'Typora/themes/typora_erimus.css'),
@@ -142,7 +142,7 @@ def clean():
         print(f'Delete file: {file}')
         os.remove(file)
 
-    print('finished.')
+    print('Clean finished.')
 
 
 def restore_settings():
