@@ -33,7 +33,6 @@ def auto_sound_device_control():
                 log.info(f"Keep mute for {now-TIME_LOG['mute']}.\n"
                          f"Play Start at: {TIME_LOG['play']}")
                 SOUND_PLAYING = True
-                request('http://localhost:8836/api?open=keepdisplayon')
 
             gap = now - TIME_LOG['play']
             log.debug(f"Playing keeps: {gap}")
@@ -42,6 +41,8 @@ def auto_sound_device_control():
             # 連續兩次檢測到播放 避免微信提示音等極短的音效激活功放
             if gap > INTERVAL and DEVICE_STATUS != True:
                 turn('on', 'switch.amplifier_smart')
+                turn('on', 'input_boolean.playing_sound')
+                request('http://localhost:8836/api?open=keepdisplayon')
                 DEVICE_STATUS = True
                 log.info(CSS('Trun sound device on.'))
 
@@ -57,11 +58,12 @@ def auto_sound_device_control():
             gap = gap.total_seconds()
 
             if ALERT_LIMIT <= gap < ALERT_LIMIT + INTERVAL:
-                kill_process('keepdisplayon')
                 say('功放即将被关闭')
 
             if gap > MUTE_LIMIT and DEVICE_STATUS != False:
                 turn('off', 'switch.amplifier_smart')
+                turn('off', 'input_boolean.playing_sound')
+                kill_process('keepdisplayon')
                 DEVICE_STATUS = False
                 log.info(CSS('Trun sound device off.'))
 
