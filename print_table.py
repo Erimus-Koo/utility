@@ -3,9 +3,9 @@
 __author__ = 'Erimus'
 # 打印二维表格
 
-import json
+import copy
 from prettytable import PrettyTable
-from erimus.toolbox import CSS
+from erimus.toolbox import FS, CSS
 
 # ═══════════════════════════════════════════════
 
@@ -51,23 +51,26 @@ def printTable(
         print(FS.warning('Press enter to continue...'))
         input()
 
-    table = table.copy()  # 深拷贝 避免影响原表
+    table = copy.deepcopy(table)  # 深拷贝 避免影响原表
 
     # 修复表格的一些基本问题
     for ri, row in enumerate(table):
-        if len(row) < col_num:  # 补全缺少的列
-            table[ri] = (row + [''] * col_num)[:col_num]
         if isinstance(row, tuple):  # sorted产生的元组 自动转换
             table[ri] = list(row)
+        if isinstance(row, dict):
+            table[ri] = list(row.values())
+        if len(row) < col_num:  # 补全缺少的列
+            table[ri] = (table[ri] + [''] * col_num)[:col_num]
 
     # 没标题的话补完标题
     if not header:  # create header
         if has_header:  # 是否认为第一行是标题
             header, table = table[0], table[1:]
+            tb = PrettyTable(header)
         else:
             header = [str(h) for h in range(col_num)]  # set align need header name
-        tb = PrettyTable(header)
-        tb.header = False
+            tb = PrettyTable(header)
+            tb.header = False
     else:
         tb = PrettyTable(header)
 
@@ -159,6 +162,7 @@ def printTable(
 
     print(tb)
 
+
 # ═══════════════════════════════════════════════
 
 
@@ -185,3 +189,6 @@ if __name__ == '__main__':
 
     title('NO HEADER'.center(30, '='))
     printTable(tb, has_header=0)
+
+    title('UNSET HEADER'.center(30, '='))
+    printTable(tb)

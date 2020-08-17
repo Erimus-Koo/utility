@@ -6,7 +6,7 @@ __author__ = 'Erimus'
 '''
 
 import os
-from erimus.toolbox import readClip, request, UA_PC, download, enable_proxy
+from erimus.toolbox import readClip, request, UA_PC, download, use_proxy
 import fire
 
 # ═══════════════════════════════════════════════
@@ -95,6 +95,6 @@ if __name__ == '__main__':
 
     # fire.Fire(m3u8_downloader)
 
-    enable_proxy()
+    use_proxy()
 
     m3u8_downloader()
