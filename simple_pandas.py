@@ -3,6 +3,7 @@
 __author__ = 'Erimus'
 # 简化pandas的一些常用命令，简化日常使用二维表格时的增删等操作。
 
+import json
 import pandas as pd
 import numpy as np
 from util.print_table import printTable
@@ -48,6 +49,12 @@ class Pandas():
         self.set_column(temp_columns)
 
     def add_row(self, *rows, columns=None, index=None):
+        # 处理新增的列
+        for row in rows:
+            if isinstance(row, dict):
+                for k in row.keys():
+                    if k not in self.columns:
+                        self.add_column(k)
         columns = columns or self.columns
         index = [index] if isinstance(index, str) else index
         new_df = pd.DataFrame([*rows], index=index, columns=columns)
@@ -60,7 +67,9 @@ class Pandas():
         self.df = self.df.sort_values(by=column_name, ascending=(not reverse))
 
     def tolist(self, fmt=False):
-        table = np.array(self.df).tolist()
+        df = self.df.copy()
+        df.fillna('', inplace=True)
+        table = np.array(df).tolist()
         if fmt:
             header = list(self.columns)
             for ri, row in enumerate(table):
@@ -102,6 +111,7 @@ if __name__ == '__main__':
     print(f'\n---\nAppend rows\n{df}')
 
     df.add_row({'a': 9, 'b': 7, 'c': 8}, index='dict')  # 添加指定列的行
+    df.add_row({'a': 9, 'b': 7, 'nc': 88}, index='new col')  # 添加含新增的列的行
     print(f'\n---\nAppend rows (by dict and has index)\n{df}')
 
     df.set_column(['a', 'b', 'c'])  # 重设列 用来排序（可增删列）
