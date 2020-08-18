@@ -96,7 +96,7 @@ def merge_video(videoList, out_file, removeSrc=False):
     os.system(concatCmd)
 
     # del temp file
-    # os.system(f'del {txt}')
+    os.system(f'del {txt}')
     if removeSrc:
         for temp in videoList:
             os.system(f'del {temp}')
