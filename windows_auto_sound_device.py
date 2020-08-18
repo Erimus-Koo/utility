@@ -9,8 +9,8 @@ from erimus.homeassistant_restapi import turn
 from .kill_process import kill_process
 
 # ═══════════════════════════════════════════════
-MUTE_LIMIT = 600  # 静音多少秒后 自动关闭声音相关设备
-ALERT_LIMIT = 400  # 静音多少秒后 提示即将关闭设备
+MUTE_LIMIT = 540  # 静音多少秒后 自动关闭声音相关设备
+ALERT_LIMIT = 360  # 静音多少秒后 提示即将关闭设备
 INTERVAL = 10  # 多少秒检测一次声音情况
 # ═══════════════════════════════════════════════
 
