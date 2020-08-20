@@ -14,13 +14,13 @@ import subprocess
 import psutil
 import time
 from util.kill_process import kill_process
+from util.windows_keep_awake import keep_awake_on, keep_awake_off
 
 # ═══════════════════════════════════════════════
 pyautogui.FAILSAFE = False  # screen off keep working
 software_dict = {
     'musicbee': r'"D:\Program Files\MusicBee\MusicBee.exe"',
     'cloudmusic': r'"C:\Program Files (x86)\Netease\CloudMusic\cloudmusic.exe"',
-    'keepdisplayon': r'"D:\OneDrive\Misc\win_tools\KeepDisplayOn.lnk"',
 }
 # ═══════════════════════════════════════════════
 
@@ -91,10 +91,21 @@ def rest_api(environ, start_response):
                     f'Supported List:\n{software_list}\n</pre>')
         params.pop('open')
 
+    # 运行命令
+    if 'run' in params:
+        cmd = params['run'].lower()
+        try:
+            eval(cmd)()
+            msg += f'Run [{cmd}] success.'
+        except Exception:
+            msg += f'Run [{cmd}] failed.'
+        params.pop('run')
+
     # 立刻锁屏
     if 'screen_off' in params:
         msg += 'SCREEN OFF'
-        for _process in ['keepdisplayon', 'musicbee', 'potplayer', 'cloudmusic']:
+        keep_awake_off()
+        for _process in ['potplayer', 'cloudmusic']:
             kill_process(_process)
         os.popen('nircmd monitor off')  # 息屏
         # os.popen('nircmd standby')  # 进入待机

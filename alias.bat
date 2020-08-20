@@ -60,3 +60,6 @@ doskey gym = python %~dp0gym_timer.py $*
 
 rem 终止进程
 doskey kill = python %~dp0kill_process.py $*
+
+rem 保持亮屏
+doskey wake = python %~dp0windows_keep_awake.py $*

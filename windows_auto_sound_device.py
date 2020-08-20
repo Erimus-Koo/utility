@@ -6,7 +6,8 @@ __author__ = 'Erimus'
 from erimus.toolbox import *
 from erimus.is_windows_playing_sound import is_windows_playing_sound
 from erimus.homeassistant_restapi import turn
-from .kill_process import kill_process
+from util.kill_process import kill_process
+from util.windows_keep_awake import *
 
 # ═══════════════════════════════════════════════
 MUTE_LIMIT = 540  # 静音多少秒后 自动关闭声音相关设备
@@ -16,11 +17,12 @@ INTERVAL = 10  # 多少秒检测一次声音情况
 
 
 def auto_sound_device_control():
+    log = set_log('INFO')  # 确保分线程被调用时log显示正确
     SOUND_PLAYING = None  # status
     DEVICE_STATUS = None
     TIME_LOG = {'play': dTime(), 'mute': dTime()}
 
-    while True:
+    while 1:
         now = dTime()
         try:
             now_playing = is_windows_playing_sound()
@@ -33,6 +35,7 @@ def auto_sound_device_control():
                 log.info(f"Keep mute for {now-TIME_LOG['mute']}.\n"
                          f"Play Start at: {TIME_LOG['play']}")
                 SOUND_PLAYING = True
+                keep_awake_on()
 
             gap = now - TIME_LOG['play']
             log.debug(f"Playing keeps: {gap}")
@@ -42,7 +45,6 @@ def auto_sound_device_control():
             if gap > INTERVAL and DEVICE_STATUS != True:
                 turn('on', 'switch.amplifier_smart')
                 turn('on', 'input_boolean.playing_sound')
-                request('http://localhost:8836/api?open=keepdisplayon')
                 DEVICE_STATUS = True
                 log.info(CSS('Trun sound device on.'))
 
@@ -52,6 +54,7 @@ def auto_sound_device_control():
                 log.info(f"Keep play for {now-TIME_LOG['play']}.\n"
                          f"Mute Start at: {TIME_LOG['mute']}")
                 SOUND_PLAYING = False
+                keep_awake_off()
 
             gap = now - TIME_LOG['mute']
             log.debug(f'Mute keeps: {gap}')
@@ -63,7 +66,6 @@ def auto_sound_device_control():
             if gap > MUTE_LIMIT and DEVICE_STATUS != False:
                 turn('off', 'switch.amplifier_smart')
                 turn('off', 'input_boolean.playing_sound')
-                kill_process('keepdisplayon')
                 DEVICE_STATUS = False
                 log.info(CSS('Trun sound device off.'))
 
@@ -77,8 +79,5 @@ def auto_sound_device_control():
 
 
 if __name__ == '__main__':
-
-    # log = set_log('DEBUG')
-    log = set_log('INFO')
 
     auto_sound_device_control()
