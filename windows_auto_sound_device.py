@@ -54,7 +54,6 @@ def auto_sound_device_control():
                 log.info(f"Keep play for {now-TIME_LOG['play']}.\n"
                          f"Mute Start at: {TIME_LOG['mute']}")
                 SOUND_PLAYING = False
-                keep_awake_off()
 
             gap = now - TIME_LOG['mute']
             log.debug(f'Mute keeps: {gap}')
@@ -68,6 +67,7 @@ def auto_sound_device_control():
                 turn('off', 'input_boolean.playing_sound')
                 DEVICE_STATUS = False
                 log.info(CSS('Trun sound device off.'))
+                keep_awake_off()
 
         elif now_playing is None:  # 发生意外
             log.warning('WARNING: Can not get the status of sound playing!')
@@ -75,9 +75,18 @@ def auto_sound_device_control():
         time.sleep(INTERVAL)
 
 
+def main():
+    while 1:
+        try:
+            auto_sound_device_control()
+        except Exception as e:
+            print(repr(e))
+            time.sleep(5)
+
+
 # ═══════════════════════════════════════════════
 
 
 if __name__ == '__main__':
 
-    auto_sound_device_control()
+    main()

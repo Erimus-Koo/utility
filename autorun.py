@@ -6,7 +6,7 @@ from erimus.toolbox import *
 from multiprocessing import Pool
 from util.remote_key_service import init_server as remote_key
 from util.scheduled_tasks import scheduled_tasks
-from util.windows_auto_sound_device import auto_sound_device_control
+from util.windows_auto_sound_device import main as auto_sound_device_control
 
 # ═══════════════════════════════════════════════
 cmd_list = [
@@ -53,5 +53,7 @@ def main():
 
 # ═══════════════════════════════════════════════
 if __name__ == '__main__':
+
+    log = set_log('INFO')
 
     main()
