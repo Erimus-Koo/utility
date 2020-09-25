@@ -5,7 +5,6 @@ __author__ = 'Erimus'
 
 import json
 import pandas as pd
-import numpy as np
 from util.print_table import printTable
 
 # ═══════════════════════════════════════════════
@@ -19,6 +18,7 @@ class Pandas():
             self.df = pd.DataFrame(columns=self.columns)
         else:
             self.df = df
+            self.columns = df.columns.values
         self.format = {}
 
     def __repr__(self):
@@ -66,21 +66,27 @@ class Pandas():
     def sort(self, column_name, reverse=False):
         self.df = self.df.sort_values(by=column_name, ascending=(not reverse))
 
-    def tolist(self, fmt=False):
+    def tolist(self, fmt=False, index=False, header=True):
         df = self.df.copy()
         df.fillna('', inplace=True)
-        table = np.array(df).tolist()
+        column_name = list(self.columns)
+        if index:  # 如果需要包括index
+            df = df.reset_index()
+            column_name = [''] + column_name  # index的列名
+        table = df.values.tolist()
         if fmt:
-            header = list(self.columns)
             for ri, row in enumerate(table):
                 for ci, col in enumerate(row):
-                    cname = header[ci]
+                    cname = column_name[ci]
                     if cname in self.format:
                         table[ri][ci] = self.format[cname](col)
+        if header:
+            table = [column_name] + table
         return table
 
-    def print_table(self, **kwargs):
-        printTable(self.tolist(fmt=True), header=list(self.columns), **kwargs)
+    def print_table(self, index=True, **kwargs):
+        printTable(self.tolist(fmt=True, index=True, header=True),
+                   has_header=True, **kwargs)
 
 
 # ═══════════════════════════════════════════════

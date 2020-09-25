@@ -29,7 +29,7 @@ def is_num(string):
 
 # 打印表格
 def printTable(
-    table,                      # 二维数组
+    table,                      # 二维数组 DataFrame
     has_header=True,            # table第一行是否是标题
     header=None,                # 表标题
     group=None,                 # 传入列名 该列如果连续行内容一致 则组合显示
