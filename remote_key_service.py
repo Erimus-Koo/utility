@@ -55,6 +55,14 @@ def process_exists(pname):
             pass
 
 
+# 立刻锁屏
+def screen_off():
+    keep_awake_off()
+    for _process in ['potplayer', 'cloudmusic']:
+        kill_process(_process)
+    os.popen('nircmd monitor off')  # 息屏
+
+
 # ═══════════════════════════════════════════════
 
 
@@ -100,16 +108,6 @@ def rest_api(environ, start_response):
         except Exception:
             msg += f'Run [{cmd}] failed.'
         params.pop('run')
-
-    # 立刻锁屏
-    if 'screen_off' in params:
-        msg += 'SCREEN OFF'
-        keep_awake_off()
-        for _process in ['potplayer', 'cloudmusic']:
-            kill_process(_process)
-        os.popen('nircmd monitor off')  # 息屏
-        # os.popen('nircmd standby')  # 进入待机
-        params.pop('screen_off')
 
     # 语音
     if 'say' in params:
