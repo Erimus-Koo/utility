@@ -15,6 +15,7 @@ import psutil
 import time
 from util.kill_process import kill_process
 from util.windows_keep_awake import keep_awake_on, keep_awake_off
+from erimus.homeassistant_restapi import turn, state
 
 # ═══════════════════════════════════════════════
 pyautogui.FAILSAFE = False  # screen off keep working
@@ -102,8 +103,12 @@ def rest_api(environ, start_response):
     # 运行命令
     if 'run' in params:
         cmd = params['run'].lower()
+        if '(' and ')' in cmd:
+            cmd, args = cmd.split('(')
+            args = [p.strip() for p in args.replace(')', '').split(',')]
+            print(f'{cmd = } | {args = }')
         try:
-            eval(cmd)()
+            eval(cmd)(*args)
             msg += f'Run [{cmd}] success.'
         except Exception:
             msg += f'Run [{cmd}] failed.'
