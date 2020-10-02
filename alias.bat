@@ -63,3 +63,6 @@ doskey kill = python %~dp0kill_process.py $*
 
 rem 保持亮屏
 doskey wake = python %~dp0windows_keep_awake.py $*
+
+rem 网易云音乐 ncm 批量转mp3
+doskey ncm = python %~dp0ncm_dump_batch.py $*
