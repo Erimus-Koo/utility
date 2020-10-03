@@ -41,7 +41,7 @@ SETTINGS_IN_SEPARATE = {
 # 格式为软件名.特定后缀。e.g.{stylus-2012.json -> stylus.json}
 SETTINGS_IN_DOWNLOAD = [
     'OmegaOptions.bak',
-    'potplayer.reg',
+    'PotPlayerMini64.reg',
     'saladict.saladict',
     'stylus.json',
     'tampermonkey.txt',
