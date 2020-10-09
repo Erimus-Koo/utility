@@ -17,6 +17,8 @@ btm = 1  # sub bottom
 
 def sub_merge(top=top, btm=btm):
     print(f'Merge capture files in "{root}"')
+    top = top / 100 if top > 1 else top
+    btm = btm / 100 if btm > 1 else btm
     images = []
     resultName = ''
     for path, dirs, files in os.walk(root):
