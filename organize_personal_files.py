@@ -46,6 +46,7 @@ SETTINGS_IN_DOWNLOAD = [
     'stylus.json',
     'tampermonkey.txt',
     'ublock.txt',
+    'auto-tab-discard-preferences.json',
 ]
 # ═══════════════════════════════════════════════
 
