@@ -17,19 +17,20 @@ ONLINE_LOG = os.path.join(MY_SITE, 'misc', 'gym.log')
 def gym_timer(gap=15, limit=99):
     gap *= 60  # minutes to seconds
     for i in range(limit):
-        print(f'[{os.getpid()}][{formatTime(fmt="time")}] ', end='')
-        say(f'第 {i+1} 次')
-        beep(1, 'game_start.mp3')
-
-        # log in
-        with open(LOG_FILE, 'r', encoding='utf-8') as f:
+        # 读取记录
+        with open(ONLINE_LOG, 'r', encoding='utf-8') as f:
             data = json.load(f)
         date = formatTime(fmt='date')
         data[date] = data.get(date, 0) + 1
-        data = json.dumps(data, ensure_ascii=False, indent=2)
-        for file in [LOG_FILE, ONLINE_LOG]:
-            with open(file, 'w', encoding='utf-8') as f:
-                f.write(data)
+
+        # 计数
+        print(f'[{os.getpid()}][{formatTime(fmt="time")}]', end='')
+        say(f'第 {data[date]} 次')
+        beep(1, 'game_start.mp3')
+
+        # 写入数据
+        with open(ONLINE_LOG, 'w', encoding='utf-8') as f:
+            f.write(json.dumps(data, ensure_ascii=False, indent=2))
 
         # sync to cos
         ERIMUS_CC.upload('misc/gym.log')
