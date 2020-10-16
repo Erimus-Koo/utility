@@ -108,8 +108,11 @@ def rest_api(environ, start_response):
             args = [p.strip() for p in args.replace(')', '').split(',')]
             print(f'{cmd = } | {args = }')
         try:
-            eval(cmd)(*args)
-            msg += f'Run [{cmd}] success.'
+            r = eval(cmd)(*args)
+            if r:
+                msg = r
+            else:
+                msg += f'Run [{cmd}] success.'
         except Exception:
             msg += f'Run [{cmd}] failed.'
         params.pop('run')
