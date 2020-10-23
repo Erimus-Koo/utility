@@ -9,7 +9,7 @@ from PIL import Image
 # ═══════════════════════════════════════════════
 
 
-def save_as(file, fmt, qlt=80, short_edge=None, force_resave=False):
+def save_as(file, fmt, qlt=80, long_edge_limit=None, force_resave=False):
     try:
         img = Image.open(file)
     except Exception:
@@ -32,9 +32,9 @@ def save_as(file, fmt, qlt=80, short_edge=None, force_resave=False):
 
     # resize
     size_changed = False
-    if short_edge and max(img.size) > short_edge:
+    if long_edge_limit and max(img.size) > long_edge_limit:
         # shorten the long edge to target, and auto adjust another edge.
-        img.thumbnail((short_edge, short_edge), Image.ANTIALIAS)
+        img.thumbnail((long_edge_limit, long_edge_limit), Image.ANTIALIAS)
         size_changed = True
 
     # ignore
