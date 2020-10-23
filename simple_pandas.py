@@ -3,7 +3,6 @@
 __author__ = 'Erimus'
 # 简化pandas的一些常用命令，简化日常使用二维表格时的增删等操作。
 
-import json
 import pandas as pd
 from util.print_table import printTable
 
@@ -87,20 +86,6 @@ class Pandas():
     def print_table(self, index=True, **kwargs):
         printTable(self.tolist(fmt=True, index=True, header=True),
                    has_header=True, **kwargs)
-
-
-# ═══════════════════════════════════════════════
-
-
-def read_excel(source, sheet='Sheet1', header=0, return_type=None, **kwargs):
-    df = pd.read_excel(source, sheet_name=sheet, header=header, **kwargs)
-    df.fillna('', inplace=True)
-    if return_type == 'df':
-        return df
-
-    r = df.to_json(orient='records')
-    r = json.loads(r)
-    return r
 
 
 # ═══════════════════════════════════════════════
