@@ -14,7 +14,7 @@ ONLINE_LOG = os.path.join(MY_SITE, 'misc', 'gym.log')
 # ═══════════════════════════════════════════════
 
 
-def gym_timer(gap=15, limit=99):
+def gym_timer(gap=30, limit=99):
     gap *= 60  # minutes to seconds
     for i in range(limit):
         # 读取记录

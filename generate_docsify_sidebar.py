@@ -45,9 +45,14 @@ def add_content(fullpath):
 
 
 def update_file(file, content):
-    with open(file, 'r', encoding='utf-8') as f:
-        old = f.read()
-    fn = file.split('\\')[-1]
+    # read old file
+    old = ''
+    if os.path.exists(file):
+        with open(file, 'r', encoding='utf-8') as f:
+            old = f.read()
+
+    # overwrite file if something new
+    path, fn = os.path.split(file)
     if old.strip() != content.strip():
         with open(file, 'w', encoding='utf-8') as f:
             f.write(content)
@@ -59,6 +64,7 @@ def update_file(file, content):
 def generate_sidebar(root=None, ignoreFolders=None):
     global md, md_private
     ignoreFolders = [] if ignoreFolders is None else ignoreFolders
+    ignoreFolders += ['.git']
     if root is None:
         root = os.getcwd()  # the path of command line
 
@@ -86,6 +92,9 @@ def generate_sidebar(root=None, ignoreFolders=None):
 
 if __name__ == '__main__':
 
-    root = r'D:\OneDrive\site\notebook'  # my docsify root
-    ignoreFolders = ['.git', '上海通']
-    generate_sidebar(root, ignoreFolders)
+    DOCSIFY_ROOT = 'D:/OneDrive/site/notebook'
+    for root, ignoreFolders in [
+        [DOCSIFY_ROOT, ['shanghaitong']],  # docsify root
+        [DOCSIFY_ROOT + '/shanghaitong', []]  # 上海地方志
+    ]:
+        generate_sidebar(root, ignoreFolders)

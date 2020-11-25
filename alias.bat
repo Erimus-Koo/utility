@@ -66,3 +66,6 @@ doskey wake = python %~dp0windows_keep_awake.py $*
 
 rem 网易云音乐 ncm 批量转mp3
 doskey ncm = python %~dp0ncm_dump_batch.py $*
+
+rem 重启icloud drive
+doskey icloud = python %~dp0icloud_restart.py $*

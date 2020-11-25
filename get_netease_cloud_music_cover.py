@@ -19,6 +19,7 @@ def get_netease_cloud_music_cover(url=None):
     # print(f'{body = }')
     image = re.findall(r'(?s)"images":.*?"description"', body)[0]
     img = re.findall(r'http.*?\.jpg', image)[0]
+    print(f'{img = }')
     webbrowser.open_new_tab(img)
 
 
