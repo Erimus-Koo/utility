@@ -32,24 +32,25 @@ def scheduled_tasks():
         print(f'[{CSS(PID)}] Scheduled Task')
         ts = timestamp()
         task_dict = {}
-        tl = []  # task list
+        td = {}  # task dict
 
         # 每十分钟运行一次
         if ts % GAP < GAP / 2:
-            tl += [{'clean': cmd(UTIL, 'organize_personal_files')}]
+            td['clean'] = cmd(UTIL, 'organize_personal_files')
 
         # 每小时运行一次
         if ts % 3600 < GAP:
-            tl += [{'docsify sidebar': cmd(UTIL, 'generate_docsify_sidebar')}]
-            tl += [{'同步笔记': cmd(ERIMUS, r'qcloud\erimuscc', 'notebook')}]
+            td['docsify sidebar'] = cmd(UTIL, 'generate_docsify_sidebar')
+            td['格式化笔记'] = cmd(UTIL, 'auto_format')
+            td['同步笔记'] = cmd(ERIMUS, r'qcloud\erimuscc', 'notebook')
 
         # 每4小时运行一次
-        if ts % (3600 * 4) < GAP:
-            tl += [{'订阅内容': cmd(ROOT, r'Spider\entertainment\update_all')}]
+        if ts % (3600 * 6) < GAP:
+            td['订阅内容'] = cmd(ROOT, r'Spider\entertainment\update_all')
 
         # 运行命令队列
-        for task in tl:
-            run_cmd(*list(task.items())[0])
+        for name, _cmd in td.items():
+            run_cmd(name, _cmd)
 
         # 定时器
         now = timestamp()
