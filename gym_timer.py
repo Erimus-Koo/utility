@@ -14,14 +14,18 @@ ONLINE_LOG = os.path.join(MY_SITE, 'misc', 'gym.log')
 # ═══════════════════════════════════════════════
 
 
-def gym_timer(gap=30, limit=99):
+def gym_timer(gap=30, limit=20, start=None):
     gap *= 60  # minutes to seconds
     for i in range(limit):
         # 读取记录
         with open(ONLINE_LOG, 'r', encoding='utf-8') as f:
             data = json.load(f)
         date = formatTime(fmt='date')
-        data[date] = data.get(date, 0) + 1
+
+        if i == 0 and start is not None:  # 第一次且设置了起始值
+            data[date] = start
+        else:
+            data[date] = data.get(date, 0) + 1
 
         # 计数
         print(f'[{os.getpid()}][{formatTime(fmt="time")}]', end='')
