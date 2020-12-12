@@ -84,19 +84,19 @@ def m3u8_downloader(url=None, start=0, end=95959,
         # 下载分片
         for index, url in enumerate(slice_list):
             print(f'=== {index+1} / {len(slice_list)} ===')
-            download(url, TEMP_PATH, f'{NAME}_{index:04d}.{ext}')
+            download(url, TEMP_PATH, f'{index:04d}.{ext}')
 
         temp_files = []
         for path, dirs, files in os.walk(TEMP_PATH):  # read all files
             for fn in files:
-                if fn.startswith(NAME) and fn.split('.')[-1] in [ext]:
+                if fn.split('.')[-1] in [ext]:
                     temp_files.append(os.path.join(path, fn))
 
         if ext == 'ts':  # ts文件直接拼接
-            src = '+'.join([f'"{v}"' for v in temp_files])
+            src = '+'.join([f'{v}' for v in temp_files])
             cmd = f'copy /b {src} "{out}"'
         else:  # 其他视频格式通过ffmpeg拼接
-            videos = ''.join([f' -i "{v}"' for v in temp_files])
+            videos = ''.join([f' -i {v}' for v in temp_files])
             cmd = f'{CMD_BASE}{videos} -c copy "{out}"'
 
     # 直接用ffmpeg下载m3u8文件
