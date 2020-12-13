@@ -43,7 +43,7 @@ def m3u8_downloader(url=None, start=0, end=95959,
     print(f'{domain_here=}')
     print(f'{domain_root=}')
 
-    body = request(url)
+    body = request(url, retry_limit=99)
     print(f'body\n{body[:1000]}\n')
 
     # 如果获得的是一个清晰度跳转列表 跳转并获取媒体文件列表 但保持domain不变
@@ -82,22 +82,18 @@ def m3u8_downloader(url=None, start=0, end=95959,
     # 下载分片文件 并合并
     if method == 'split':
         # 下载分片
+        temp_file_list = ''
         for index, url in enumerate(slice_list):
             print(f'=== {index+1} / {len(slice_list)} ===')
-            download(url, TEMP_PATH, f'{index:04d}.{ext}')
+            temp_file = os.path.join(TEMP_PATH, f'{NAME}_{index:04d}.{ext}')
+            while not os.path.exists(temp_file):  # try until downloaded
+                download(url, TEMP_PATH, temp_file)
+            temp_file_list += f"file '{temp_file}'\n"
 
-        temp_files = []
-        for path, dirs, files in os.walk(TEMP_PATH):  # read all files
-            for fn in files:
-                if fn.split('.')[-1] in [ext]:
-                    temp_files.append(os.path.join(path, fn))
-
-        if ext == 'ts':  # ts文件直接拼接
-            src = '+'.join([f'{v}' for v in temp_files])
-            cmd = f'copy /b {src} "{out}"'
-        else:  # 其他视频格式通过ffmpeg拼接
-            videos = ''.join([f' -i {v}' for v in temp_files])
-            cmd = f'{CMD_BASE}{videos} -c copy "{out}"'
+        video_list_txt = os.path.join(TEMP_PATH, f'{NAME}.txt')
+        with open(video_list_txt, 'w', encoding='utf-8') as f:
+            f.write(temp_file_list)
+        cmd = f'{CMD_BASE} -i {video_list_txt} -c copy "{out}"'
 
     # 直接用ffmpeg下载m3u8文件
     elif method == 'direct':
@@ -111,6 +107,7 @@ def m3u8_downloader(url=None, start=0, end=95959,
 
     if os.path.exists(out):
         print(f'Downlaod finished: {out}')
+        input('Press Enter to delete temp files?')
         if method == 'split':
             os.system(f'del {TEMP_PATH}\\{NAME}*.*')
         os.system(f'rmdir {TEMP_PATH}')
