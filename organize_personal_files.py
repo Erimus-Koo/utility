@@ -47,6 +47,7 @@ SETTINGS_IN_DOWNLOAD = [
     'tampermonkey.txt',
     'ublock.txt',
     'auto-tab-discard-preferences.json',
+    'vimium-options.json',
 ]
 # ═══════════════════════════════════════════════
 
