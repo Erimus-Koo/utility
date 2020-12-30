@@ -17,17 +17,19 @@ def detect_adb_devices():
     ports = re.findall(r'(?<=127\.0\.0\.1:)\d+', out)
     print(f'{ports = }')
     if ports:
-        return int(ports[0])
+        return ports
 
 
 # 获取模拟器
-def get_device(start_port=None):
+def get_device(port=None):
     # 这里的端口号可以用 adb devices 查看。
     # 强制用端口号连接，有时候在 adb devices 找不到设备时仍可强制连接。
-    if start_port is None:
-        start_port = detect_adb_devices() or 62001
+    if port is None:
+        port_list = detect_adb_devices() or range(62001, 65535)
+    else:
+        port_list = [port]
 
-    for port in range(start_port, 65535):
+    for port in port_list:
         device = f'127.0.0.1:{port}'
         try:
             print(f'Try connect device: {device}')
@@ -67,6 +69,6 @@ if __name__ == '__main__':
 
     detect_adb_devices()
 
-    # d = get_device()
-    # package_name = 'com.netease.cloudmusic'
-    # launch_app(package_name)
+    d = get_device()
+    package_name = 'com.netease.cloudmusic'
+    launch_app(d, package_name)
