@@ -107,7 +107,7 @@ def m3u8_downloader(url=None, start=0, end=95959,
 
     if os.path.exists(out):
         print(f'Downlaod finished: {out}')
-        input('Press Enter to delete temp files?')
+        # input('Press Enter to delete temp files?')
         if method == 'split':
             os.system(f'del {TEMP_PATH}\\{NAME}*.*')
         os.system(f'rmdir {TEMP_PATH}')
