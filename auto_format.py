@@ -36,6 +36,7 @@ def auto_format_file(src, all_backup=None):
         all_backup = read_all_backup_files()
 
     old_files = [fn for fn in all_backup if fn.startswith(filename)]
+    old_file = None
     if old_files:
         old_file = os.path.join(HISTORY_PATH, old_files[-1])  # latest
         with open(old_file, 'r', encoding='utf-8') as f:
