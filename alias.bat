@@ -49,23 +49,25 @@ doskey fmt = python %~dp0auto_format.py $*
 rem 自动整理电脑上的琐碎文件
 doskey clean = python %~dp0organize_personal_files.py $*
 
-rem 表情包整理 自动从webp转png
-doskey sticker = python D:\References\sticker\sticker.py $*
-
 rem m3u8下载器
 doskey m3u8 = python %private%m3u8.py $*
 
 rem 定期起身运动
 doskey gym = python %~dp0gym_timer.py $*
 
-rem 终止进程
-doskey kill = python %~dp0kill_process.py $*
+rem ========== 以下仅工作于 windows ==========
+
+rem 表情包整理 自动从webp转png
+doskey sticker = python D:\References\sticker\sticker.py $*
 
 rem 保持亮屏
 doskey wake = python %~dp0windows_keep_awake.py $*
 
 rem 网易云音乐 ncm 批量转mp3
 doskey ncm = python %~dp0ncm_dump_batch.py $*
+
+rem 终止进程
+doskey kill = python %~dp0kill_process.py $*
 
 rem 重启icloud drive
 doskey icloud = python %~dp0icloud_restart.py $*
