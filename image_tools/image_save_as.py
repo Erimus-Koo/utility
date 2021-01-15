@@ -10,7 +10,8 @@ import fire
 # ═══════════════════════════════════════════════
 
 
-def save_as(file, fmt, qlt=80, long_edge=None, force_resave=False):
+def save_as(file, fmt, qlt=80, force_resave=False,
+            long_edge=None, width=None, height=None):
     try:
         img = Image.open(file)
     except Exception:
@@ -39,6 +40,16 @@ def save_as(file, fmt, qlt=80, long_edge=None, force_resave=False):
         img.thumbnail((long_edge, long_edge), Image.ANTIALIAS)
         size_changed = True
 
+    if width and img.size[0] > width:
+        new_height = int(round(img.size[1] / img.size[0] * width))
+        img = img.resize((width, new_height), Image.ANTIALIAS)
+        size_changed = True
+
+    if height and img.size[1] > height:
+        new_width = int(round(img.size[0] / img.size[1] * height))
+        img = img.resize((new_width, height), Image.ANTIALIAS)
+        size_changed = True
+
     # ignore
     if not force_resave and not size_changed:
         # jpeg -> jpg
@@ -50,8 +61,7 @@ def save_as(file, fmt, qlt=80, long_edge=None, force_resave=False):
             return
 
     # rename
-    info = f'_thumb{long_edge}' if long_edge and size_changed else ''
-    file = f'{file}{info}.{fmt}'
+    file = f'{file}.{fmt}'
     print(f'Save | {file}')
     img.save(file, quality=qlt)
 
@@ -59,7 +69,8 @@ def save_as(file, fmt, qlt=80, long_edge=None, force_resave=False):
 # ═══════════════════════════════════════════════
 
 
-def resave_file(root=None, edge=None):  # remove private information
+def resave_file(root=None, edge=None, width=None, height=None):
+    print(f'{root = } {edge = } {width = } {height = }')
     if root is None:
         root = os.getcwd()
         # root = 'G:/Downloads/photo backup/'
@@ -71,7 +82,8 @@ def resave_file(root=None, edge=None):  # remove private information
             file = os.path.join(path, name)
             fn, ext = os.path.splitext(name)
             ext = ext.lstrip('.')
-            save_as(file, ext, qlt=80, long_edge=edge, force_resave=force)
+            save_as(file, ext, qlt=80, force_resave=force,
+                    long_edge=edge, width=width, height=height)
         break
 
 
