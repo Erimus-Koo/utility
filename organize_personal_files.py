@@ -101,6 +101,8 @@ def clean():
         for fn in files:
             if fn.endswith('.torrent'):
                 delete_files.append(os.path.join(root, fn))
+            if fn.endswith('.mp41'):  # zhuzhu zimu
+                os.rename(os.path.join(root, fn), os.path.join(root, fn[:-1]))
         break
 
     for sname, spath in SETTINGS_IN_SEPARATE.items():
