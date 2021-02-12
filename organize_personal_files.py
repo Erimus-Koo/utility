@@ -22,6 +22,7 @@ delete_files = []  # 需要删除的文件
 copy_files = []  # 需要备份的文件
 BACKUP_DICT = {}  # 已备份的最新文件
 # ═══════════════════════════════════════════════
+# 从各软件所在目录读取设置并备份
 SETTINGS_IN_SEPARATE = {
     'cmder': 'D:/Program Files/cmder/config/user-ConEmu.xml',
     'listary': os.path.join(APPDATA, 'Listary/UserData/Preferences.json'),
@@ -32,24 +33,27 @@ SETTINGS_IN_SEPARATE = {
     'setpoint': os.path.join(APPDATA, 'Logitech/SetPoint/user.xml'),
     # 'snipaste': 'D:/Program Files/Snipaste/config.ini',
     'totalcmd': 'D:/Program Files/TotalCMD64/Wincmd.ini',
-    'totalcmdusercmd': 'D:/Program Files/TotalCMD64/usercmd.ini',
-    'typora': os.path.join(APPDATA, 'Typora/themes/typora_erimus.css'),
+    'totalcmd-usercmd': 'D:/Program Files/TotalCMD64/usercmd.ini',
+    'typora': os.path.join(APPDATA, 'Typora/themes/typora-erimus.css'),
     'xnview': os.path.join(APPDATA, 'XnViewMP/xnview.ini'),
-    'xnviewbookmark': os.path.join(APPDATA, 'XnViewMP/bookmark.ini'),
+    'xnview-bookmark': os.path.join(APPDATA, 'XnViewMP/bookmark.ini'),
 }
-# 备份到下载目录的配置文件。
-# 格式为软件名.特定后缀。e.g.{stylus-2012.json -> stylus.json}
+
+# 从下载目录读取下载的配置文件。
+# 下载的备份文件经常有类似 stylus-2021-02-11.json 的形式
+# 需要识别关键字 stylus 和后缀名 json
 SETTINGS_IN_DOWNLOAD = [
     'OmegaOptions.bak',
-    'PotPlayerMini64.reg',
+    'PotPlayer.reg',
     'saladict.saladict',
     'stylus.json',
     'tampermonkey.txt',
     'ublock.txt',
-    'auto-tab-discard-preferences.json',
-    'vimium-options.json',
+    'auto-tab-discard.json',
+    'vimium.json',
 ]
 # ═══════════════════════════════════════════════
+re_time = re.compile(r'_\d{4}(-\d\d){5}')
 
 
 # 返回各个app最新版备份的文件名列表
@@ -58,11 +62,15 @@ def read_backup_file():
     for path, dirs, files in os.walk(BACKUP_FOLDER):  # read all files
         for fn in files:
             file = os.path.join(path, fn)  # full path
-            app_name = fn.split('_')[0]
-            result.setdefault(app_name, [])
-            result[app_name].append(file)
+            update_time = re_time.search(fn)
+            if update_time:
+                update_time = update_time.group(0)
+                app_name = fn.split(update_time)[0]
+                result.setdefault(app_name, [])
+                result[app_name].append(file)
     for app_name, files in result.copy().items():
         result[app_name] = max(files)  # 以文件名最大的文件为最新文件
+    # [print(k, v) for k, v in result.items()]
     return result
 
 
@@ -85,18 +93,20 @@ def different(file1, file2):
 def backup_setting_file(setting_path, app_name):
     if not os.path.exists(setting_path):
         print(f'Not exists: {setting_path}')
+
+    app_backup_folder = os.path.join(BACKUP_FOLDER, app_name)
+    if not os.path.exists(app_backup_folder):
+        os.mkdir(app_backup_folder)
     if different(setting_path, BACKUP_DICT.get(app_name)):  # 文件有改动时才更新
         print(f'{app_name.title()} setting updated.')
         fn, ext = os.path.splitext(setting_path)
-        target = os.path.join(BACKUP_FOLDER, f'{app_name}_{TIME}{ext}')
+        target = os.path.join(app_backup_folder, f'{app_name}_{TIME}{ext}')
         copy_files.append((setting_path, target))
 
 
 def clean():
-    # global BACKUP_DICT
-    # [print(v.split('\\')[-1]) for v in BACKUP_DICT.values()]
 
-    # 删除torrent文件
+    # 删除torrent文件及下载相关
     for root, dirname, files in os.walk(BT_DOWNLOAD):
         for fn in files:
             if fn.endswith('.torrent'):
@@ -105,6 +115,7 @@ def clean():
                 os.rename(os.path.join(root, fn), os.path.join(root, fn[:-1]))
         break
 
+    # 备份各软件目录下的设置文件
     for sname, spath in SETTINGS_IN_SEPARATE.items():
         backup_setting_file(spath, sname)
 
@@ -115,10 +126,9 @@ def clean():
             file = os.path.join(path, fn)  # full path
             # 移动各软件的配置文件备份 appname.ext(specific)
             for bk_file in SETTINGS_IN_DOWNLOAD:
-                app, ext = bk_file.lower().split('.')
-                if app in fn and fn.endswith(ext):
-                    app_backup = os.path.join(path, fn)
-                    backup_setting_file(app_backup, app)
+                app_name, ext = bk_file.split('.')
+                if app_name.lower() in fn and fn.endswith(ext.lower()):
+                    backup_setting_file(file, app_name)
                     delete_files.append(file)
 
             # 删除下载的软件升级安装包
@@ -151,7 +161,8 @@ def clean():
 
 def restore_settings():
     for app_name, target in SETTINGS_IN_SEPARATE.items():
-        if source:=BACKUP_DICT.get(app_name):
+        source = BACKUP_DICT.get(app_name)
+        if source:
             if not os.path.exists(target):  # 无配置文件
                 print(f'\n"{target}" not exists.')
                 # os.system(f'copy "{source}" "{target}"')
