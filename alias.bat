@@ -71,3 +71,6 @@ doskey kill = python %~dp0kill_process.py $*
 
 rem 重启icloud drive
 doskey icloud = python %~dp0icloud_restart.py $*
+
+rem 启动 http server
+doskey server = python %~dp0http_server.py $*
