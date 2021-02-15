@@ -6,11 +6,17 @@ __author__ = 'Erimus'
 import socket
 from art import *
 import os
+import fire
 
 # ═══════════════════════════════════════════════
 
 
-def main():
+def http_server(root=None, port=80):
+    if root is None:
+        root = 'D:/OneDrive/site' if os.name =='nt' else '/Users/erimus/OneDrive/site'
+    else:
+        root = root.replace('\\', '/')
+
     # get host ip
     hostname = socket.gethostname()
     print(f'{hostname = }')
@@ -26,7 +32,8 @@ def main():
 
     tprint(ip, 'wizard')
 
-    cmd = f"sudo python3 -m http.server 80 --directory /Users/erimus/OneDrive/site --bind {ip}"
+    sudo = '' if os.name == 'nt' else 'sudo '  # mac need sudo sometime
+    cmd = f'{sudo}python -m http.server {port} --directory "{root}" --bind {ip}'
     print(f'{cmd = }')
     os.system(cmd)
 
@@ -35,4 +42,4 @@ def main():
 
 if __name__ == '__main__':
 
-    main()
+    fire.Fire(http_server)
