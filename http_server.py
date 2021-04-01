@@ -13,14 +13,15 @@ import fire
 
 def http_server(root=None, port=80):
     if root is None:
-        root = 'D:/OneDrive/site' if os.name =='nt' else '/Users/erimus/OneDrive/site'
+        root = ('D:/OneDrive/site' if os.name == 'nt'
+                else '/Users/erimus/OneDrive/site')
     else:
         root = root.replace('\\', '/')
 
     # get host ip
-    hostname = socket.gethostname()
-    print(f'{hostname = }')
-    ip = socket.gethostbyname(hostname)
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    ip = s.getsockname()[0]
     print(f'{ip = }')
 
     valid = True
@@ -32,8 +33,8 @@ def http_server(root=None, port=80):
 
     tprint(ip, 'wizard')
 
-    sudo = '' if os.name == 'nt' else 'sudo '  # mac need sudo sometime
-    cmd = f'{sudo}python -m http.server {port} --directory "{root}" --bind {ip}'
+    python = 'python' if os.name == 'nt' else 'sudo python3'  # mac need sudo sometime
+    cmd = f'{python} -m http.server {port} --directory "{root}" --bind {ip}'
     print(f'{cmd = }')
     os.system(cmd)
 
