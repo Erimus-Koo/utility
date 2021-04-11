@@ -28,7 +28,7 @@ def gym_timer(gap=30, limit=20, start=None):
             data[date] = data.get(date, 0) + 1
 
         # 计数
-        print(f'[{os.getpid()}][{formatTime(fmt="time")}]', end='')
+        print(f'[{formatTime(fmt="time")}] ({i+1}/{limit}) ', end='')
         say(f'第 {data[date]} 次')
         beep(1, 'game_start.mp3')
 
