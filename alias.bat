@@ -51,6 +51,7 @@ doskey clean = python %~dp0organize_personal_files.py $*
 
 rem m3u8下载器
 doskey m3u8 = python %private%m3u8.py $*
+doskey mu = python %private%m3u8.py $*
 
 rem 定期起身运动
 doskey gym = python %~dp0gym_timer.py $*
