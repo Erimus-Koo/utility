@@ -36,7 +36,8 @@ def merge_video(root=None):
     video_list_txt = os.path.join(video_root, f'file_list.txt')
     with open(video_list_txt, 'w', encoding='utf-8') as f:
         f.write(temp_file_list)
-    cmd = f'ffmpeg -f concat -safe 0 -i {video_list_txt} -c copy "{out_file}"'
+    cmd = f'ffmpeg -f concat -safe 0 -i "{video_list_txt}" -c copy "{out_file}"'
+    print(f'{cmd = }')
     os.system(cmd)
 
     # check output
