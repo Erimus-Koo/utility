@@ -38,7 +38,7 @@ def m3u8_downloader(url=None, start=0, end=95959,
     out = os.path.join(OUTPUT_PATH, f'{NAME}.mp4')
 
     url_without_param = url.split('?')[0] if '?' in url else url
-    domain_here = '/'.join(url_without_param.split('/')[:-1]) + '/'  # 当前路劲
+    domain_here = '/'.join(url_without_param.split('/')[:-1]) + '/'  # 当前路径
     domain_root = '/'.join(domain_here.split('/')[:3])  # 根域名
     print(f'{domain_here=}')
     print(f'{domain_root=}')
@@ -46,7 +46,7 @@ def m3u8_downloader(url=None, start=0, end=95959,
     body = request(url, retry_limit=99)
     print(f'body\n{body[:1000]}\n')
 
-    # 如果获得的是一个清晰度跳转列表 跳转并获取媒体文件列表 但保持domain不变
+    # 从清晰度列表 跳转并获取媒体文件列表 但保持domain不变
     if '#EXTINF' not in body and '#EXT-X-STREAM-INF' in body:
         print('This is a m3u8 list!'.ljust(50, '='))
         lines = body.split('\n')
@@ -54,8 +54,10 @@ def m3u8_downloader(url=None, start=0, end=95959,
             if line.startswith('#EXT-X-STREAM-INF'):
                 first = lines[i + 1]
                 break
-        print(f'Highest Resulution Address\n{domain_here + first}\n')
-        body = request(domain_here + first)
+        if not first.startswith('http'):  # 补全根目录
+            first = (domain_root if first[0] == '/' else domain_here) + first
+        print(f'Highest Resulution Address\n{first}\n')
+        body = request(first)
         print(f'{"body".ljust(50,"=")}\n{body[:1000]}\n')
 
     # 补全视频片段地址
@@ -63,37 +65,33 @@ def m3u8_downloader(url=None, start=0, end=95959,
     now = 0  # 记录当前片段的起始秒数
     ext = None
     for line in re.findall(r'(?s)#EXTINF.*?(?=#)', body):
-        time, address = line.split('\n')[:2]
+        time, v_url = line.split('\n')[:2]
         now += float(time.strip('#EXTINF:,'))
 
         if ext is None:
-            ext = address.split('?')[0].split('.')[-1]
+            ext = v_url.split('?')[0].split('.')[-1]
 
-        if not address.startswith('http'):  # 补全根目录
-            if address.startswith('/'):
-                full_address = domain_root + address
-            else:
-                full_address = domain_here + address
+        if not v_url.startswith('http'):  # 补全根目录
+            v_url = (domain_root if v_url[0] == '/' else domain_here) + v_url
+
         if start < now < end:
-            slice_list.append(full_address)
-            body = body.replace(address, full_address, 1)
-    print(f'{"new body".ljust(50,"=")}\n{body[:1000]}')
+            slice_list.append(v_url)
 
     # 下载分片文件 并合并
     if method == 'split':
         # 下载分片
         temp_file_list = ''
-        for index, url in enumerate(slice_list):
+        for index, v_url in enumerate(slice_list):
             print(f'=== {index+1} / {len(slice_list)} ===')
             temp_file = os.path.join(TEMP_PATH, f'{NAME}_{index:04d}.{ext}')
             while not os.path.exists(temp_file):  # try until downloaded
-                download(url, TEMP_PATH, temp_file)
+                download(v_url, TEMP_PATH, temp_file)
             temp_file_list += f"file '{temp_file}'\n"
 
         video_list_txt = os.path.join(TEMP_PATH, f'{NAME}.txt')
         with open(video_list_txt, 'w', encoding='utf-8') as f:
             f.write(temp_file_list)
-        cmd = f'{CMD_BASE} -i {video_list_txt} -c copy "{out}"'
+        cmd = f'{CMD_BASE} -i "{video_list_txt}" -c copy "{out}"'
 
     # 直接用ffmpeg下载m3u8文件
     elif method == 'direct':
@@ -109,8 +107,8 @@ def m3u8_downloader(url=None, start=0, end=95959,
         print(f'Downlaod finished: {out}')
         # input('Press Enter to delete temp files?')
         if method == 'split':
-            os.system(f'del {TEMP_PATH}\\{NAME}*.*')
-        os.system(f'rmdir {TEMP_PATH}')
+            os.system(f'del "{TEMP_PATH}\\{NAME}*.*"')
+        os.system(f'rmdir "{TEMP_PATH}"')
 
 
 # ═══════════════════════════════════════════════
