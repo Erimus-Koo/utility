@@ -26,20 +26,27 @@ def read_all_backup_files():  # 避免重复读取
         return files
 
 
-def auto_format_file(src, all_backup=None):
+def auto_format_file(src, all_backup_files=None):
     # read recent backup
-    old = new = ''
+    old = new = ''  # 格式化后的文件内容
     filepath, filename = os.path.split(src)
     filename, ext = os.path.splitext(filename)
 
-    if all_backup is None:
-        all_backup = read_all_backup_files()
+    if all_backup_files is None:
+        all_backup_files = read_all_backup_files()
 
-    old_files = [fn for fn in all_backup if fn.startswith(filename)]
-    old_file = None
-    if old_files:
-        old_file = os.path.join(HISTORY_PATH, old_files[-1])  # latest
-        with open(old_file, 'r', encoding='utf-8') as f:
+    # 找到最新的备份文件
+    # 为了避免前面几个字相同的文件名 所以用比较严格的校验方式
+    recent_backup = None
+    for fn in all_backup_files[::-1]:
+        if fn.startswith(f'{filename}_') and fn.endswith(ext):
+            mid = fn[len(f'{filename}_'):-len(ext)]
+            if len(mid)==10 and mid.isdigit():  # timestamp
+                recent_backup = os.path.join(HISTORY_PATH, fn)
+                break
+
+    if recent_backup is not None:
+        with open(recent_backup, 'r', encoding='utf-8') as f:
             old = f.read()
         with open(src, 'r', encoding='utf-8') as f:
             new = f.read()
@@ -48,8 +55,8 @@ def auto_format_file(src, all_backup=None):
 
     # backup source file
     if not old or old != new:
-        print(f'{old_file = }')
-        print(f'{src      = }')
+        print(f'{src = }')
+        print(f'{recent_backup = }')
         backup = f'{filename}_{int(time.time())}{ext}'  # + timestamp
         backup = os.path.join(HISTORY_PATH, backup)
         shutil.copy(src, backup)
@@ -61,7 +68,7 @@ def auto_format_file(src, all_backup=None):
 
 def auto_format(*path):
     if not path:
-        target = 'D:/OneDrive/site/notebook' # 无参数 默认处理笔记目录
+        target = 'D:/OneDrive/site/notebook'  # 无参数 默认处理笔记目录
     else:
         target = ' '.join(path).strip('"')  # 万一传入的路径含有空格 需要拼接
     print(f'Auto Format: {target}')
@@ -72,7 +79,7 @@ def auto_format(*path):
 
     # 处理目录
     elif os.path.isdir(target):
-        all_backup = read_all_backup_files()  # 读取所有备份文件
+        all_backup_files = read_all_backup_files()  # 读取所有备份文件
         for path, dirs, files in os.walk(target):  # read all files
             if path == '.git':
                 continue
@@ -83,7 +90,7 @@ def auto_format(*path):
                     continue
 
                 file = os.path.join(path, fn)  # full path
-                auto_format_file(file, all_backup)
+                auto_format_file(file, all_backup_files)
 
     # 其它情况
     elif os.path.exists(target):
