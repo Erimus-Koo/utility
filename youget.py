@@ -20,8 +20,8 @@ def you_get(url, size='min', output_dir=None):
     # find min/max size
     cmd = f'you-get {proxy} {url} -i'
     print(f'RUN COMMAND: {cmd}')
-    p = subprocess.run(cmd, shell=True, stdout=subprocess.PIPE)
-    out = p.stdout.decode('utf-8').replace('\n', '').replace('\r', '')
+    p = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+    out = p.decode('utf-8').replace('\n', '').replace('\r', '')
     itag_dict = {}
     for i in re.findall(r'\d+ bytes\)\s.*?=\d+', out):
         i = i.split(' ')
@@ -32,7 +32,7 @@ def you_get(url, size='min', output_dir=None):
         return 'error'
 
     itag = sorted(itag_dict.items(), key=lambda x: x[1],
-                  reverse=(size=='max'))[0][0]
+                  reverse=(size == 'max'))[0][0]
 
     # download path = command running path
     path = f'-o {output_dir or os.getcwd()}'
@@ -40,7 +40,14 @@ def you_get(url, size='min', output_dir=None):
     # download
     cmd = f'you-get {proxy} {url} {itag} {path}'
     print(f'RUN COMMAND: {cmd}')
-    os.system(cmd)
+    p = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
+    out = p.decode('utf-8')#.replace('\n', '').replace('\r', '')
+    # print(f'{out = }')
+    if 'file already exists' in out:
+        print(f' file already exists '.center(30,'-'))
+        return 'exists'
+
+    return 'success'
 
 
 def main(*urls, size=None):  # download_size: min, max
@@ -58,4 +65,5 @@ def main(*urls, size=None):  # download_size: min, max
 
 if __name__ == '__main__':
 
+    main('https://www.youtube.com/watch?v=o-RJ2IV7XzU')
     fire.Fire(main)
