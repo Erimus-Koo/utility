@@ -1,5 +1,6 @@
 @echo off
 
+rem ==================== python ====================
 set private=D:\OneDrive\05ProgramProject\Python\utilities\private\
 rem echo %private%
 
@@ -56,7 +57,7 @@ doskey mu = python %private%m3u8.py $*
 rem 定期起身运动
 doskey gym = python %~dp0gym_timer.py $*
 
-rem ========== 以下仅工作于 windows ==========
+rem ==================== 以下仅工作于 windows ====================
 
 rem 表情包整理 自动从webp转png
 doskey sticker = python D:\References\sticker\sticker.py $*
@@ -75,3 +76,11 @@ doskey icloud = python %~dp0icloud_restart.py $*
 
 rem 启动 http server
 doskey server = python %~dp0http_server.py $*
+
+rem ==================== others ====================
+rem git bfg
+doskey bfg = java -jar "D:\OneDrive\Misc\path\bfg.jar" $*
+
+rem 启动 mongodb
+doskey mongo = "C:\Program Files\MongoDB\Server\4.0\bin\mongod" -f "D:\work\mongodb\mongod.conf"
+doskey mongodb = "C:\Program Files\MongoDB\Server\4.0\bin\mongod" -f "D:\work\mongodb\mongod.conf"

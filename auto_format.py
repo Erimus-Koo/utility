@@ -41,7 +41,7 @@ def auto_format_file(src, all_backup_files=None):
     for fn in all_backup_files[::-1]:
         if fn.startswith(f'{filename}_') and fn.endswith(ext):
             mid = fn[len(f'{filename}_'):-len(ext)]
-            if len(mid)==10 and mid.isdigit():  # timestamp
+            if len(mid) == 10 and mid.isdigit():  # timestamp
                 recent_backup = os.path.join(HISTORY_PATH, fn)
                 break
 
