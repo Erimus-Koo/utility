@@ -10,16 +10,16 @@ from util.kill_process import kill_process
 from util.windows_keep_awake import *
 
 # ═══════════════════════════════════════════════
-MUTE_LIMIT = 540  # 静音多少秒后 自动关闭声音相关设备
 ALERT_LIMIT = 360  # 静音多少秒后 提示即将关闭设备
+MUTE_LIMIT = 540  # 静音多少秒后 自动关闭声音相关设备
+MONITOR_OFF_LIMIT = 900  # 静音多少秒后 自动关闭显示器
 INTERVAL = 10  # 多少秒检测一次声音情况
 # ═══════════════════════════════════════════════
 
 
 def auto_sound_device_control():
     log = set_log('INFO')  # 确保分线程被调用时log显示正确
-    SOUND_PLAYING = None  # status
-    DEVICE_STATUS = None
+    SOUND_PLAYING = DEVICE_STATUS = MONITOR_STATUS = None
     TIME_LOG = {'play': dTime(), 'mute': dTime()}
 
     while 1:
@@ -42,11 +42,16 @@ def auto_sound_device_control():
             gap = gap.total_seconds()
 
             # 連續兩次檢測到播放 避免微信提示音等極短的音效激活功放
-            if gap > INTERVAL and DEVICE_STATUS != True:
-                turn('on', 'switch.amplifier_smart')
-                turn('on', 'input_boolean.playing_sound')
-                DEVICE_STATUS = True
-                log.info(CSS('Trun sound device on.'))
+            if gap > INTERVAL:
+                if DEVICE_STATUS != True:
+                    turn('on', 'switch.amplifier_smart')
+                    turn('on', 'input_boolean.playing_sound')
+                    DEVICE_STATUS = True
+                    log.info(CSS('Trun on the sound device.'))
+                if MONITOR_STATUS != True:
+                    turn('on', 'switch.monitor')
+                    MONITOR_STATUS = True
+                    log.info(CSS('Trun on the monitor.'))
 
         elif now_playing is False:  # 静音中
             if SOUND_PLAYING != False:  # 播放 -> 静音
@@ -66,8 +71,14 @@ def auto_sound_device_control():
                 turn('off', 'switch.amplifier_smart')
                 turn('off', 'input_boolean.playing_sound')
                 DEVICE_STATUS = False
-                log.info(CSS('Trun sound device off.'))
+                log.info(CSS('Trun off the sound device.'))
                 keep_awake_off()
+                os.system('nircmd.exe monitor off')
+
+            if gap > MONITOR_OFF_LIMIT and MONITOR_STATUS != False:
+                turn('off', 'switch.monitor')
+                MONITOR_STATUS = False
+                log.info(CSS('Trun off the monitor.'))
 
         elif now_playing is None:  # 发生意外
             log.warning('WARNING: Can not get the status of sound playing!')
