@@ -4,6 +4,7 @@ __author__ = 'Erimus'
 # use ffmpeg trim & merge video
 # ffmpeg need to be added in PATH
 
+import pyperclip
 import os
 import re
 from datetime import datetime
@@ -19,11 +20,9 @@ def fmt_time(time_str):
         return datetime.strptime(time_str, '%H:%M:%S')
 
 
-def trim_video(src_file, *clip_points, merge=True):
-    # if '/' in src_file or '\\' in src_file:
+def trim_video(src_file=None, *clip_points, merge=True):
+    src_file = src_file or pyperclip.paste()  # 没有输入的话直接读取剪贴板
     path = os.path.abspath(os.path.dirname(src_file))
-    # else:
-    # path = os.getcwd()
     full_file_name = os.path.basename(src_file)
     file_name, ext = os.path.splitext(full_file_name)
     print(f'{path=}\n{file_name=}\n{ext=}')
