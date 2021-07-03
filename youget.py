@@ -10,7 +10,7 @@ import re
 import fire
 
 # ═══════════════════════════════════════════════
-DEFAULT_PROXY = '127.0.0.1:10809'
+DEFAULT_PROXY = '127.0.0.1:7890'
 
 
 def you_get(url, size='min', output_dir=None):
@@ -41,10 +41,10 @@ def you_get(url, size='min', output_dir=None):
     cmd = f'you-get {proxy} {url} {itag} {path}'
     print(f'RUN COMMAND: {cmd}')
     p = subprocess.check_output(cmd, stderr=subprocess.STDOUT)
-    out = p.decode('utf-8')#.replace('\n', '').replace('\r', '')
+    out = p.decode('utf-8')  # .replace('\n', '').replace('\r', '')
     # print(f'{out = }')
     if 'file already exists' in out:
-        print(f' file already exists '.center(30,'-'))
+        print(f' file already exists '.center(30, '-'))
         return 'exists'
 
     return 'success'
@@ -65,5 +65,5 @@ def main(*urls, size=None):  # download_size: min, max
 
 if __name__ == '__main__':
 
-    main('https://www.youtube.com/watch?v=o-RJ2IV7XzU')
+    main('https://www.youtube.com/watch?v=5KaDzxJP6vs')
     fire.Fire(main)
