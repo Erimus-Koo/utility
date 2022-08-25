@@ -4,6 +4,7 @@ __author__ = 'Erimus'
 # 把alias.bat的内容输出为totalcmd的自定义命令，并且写入totalcmd的alias。
 
 import os
+from pprint import pp
 
 # ═══════════════════════════════════════════════
 HERE = os.path.abspath(os.path.dirname(__file__))
@@ -26,8 +27,10 @@ def alias_to_totalcmd():
                     .replace('%~dp0', HERE + '\\')\
                     .replace(r'%private%', PRIVATE + '\\')\
                     .strip()
-                alias_dict[alias] = cmd
-    # printFormatJSON(alias_dict)
+                alias_dict[alias] = {'cmd': cmd}
+            if line.startswith('rem totalcmd param'):
+                alias_dict[alias]['param'] = line[line.index('param'):].strip()
+    pp(alias_dict)
 
     # write usercmd
     content = ''
@@ -37,8 +40,9 @@ def alias_to_totalcmd():
             content += line
             if 'em_placeholder' in line:
                 break
-    for alias, cmd in alias_dict.items():
-        content += f'\n[em_{alias}]\ncmd=cmd.exe /k {cmd}\n'
+    for alias, v in alias_dict.items():
+        param = f'{v["param"]}\n' if 'param' in v else ''
+        content += f'\n[em_{alias}]\ncmd=cmd.exe /k {v["cmd"]}\n{param}'
     print(content)
     with open(USERCMD, 'w', encoding='utf-8') as f:
         f.write(content)
