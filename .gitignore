@@ -6,8 +6,8 @@
 *.min.css
 *.min.js
 *.min.json
+*.log
 temp.py
-gym.log
 temp/
 Extract_BroadLink_learned_codes_from_iOS_App/
 Hitachi_IR_Code/
