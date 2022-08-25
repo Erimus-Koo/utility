@@ -85,12 +85,14 @@ def auto_format(*path):
                 continue
             for fn in files:
                 name, ext = os.path.splitext(fn)
-                if any((fn.startswith('_sidebar'),
-                        ext not in ['.md'])):  # 仅针对md
-                    continue
-
                 file = os.path.join(path, fn)  # full path
-                auto_format_file(file, all_backup_files)
+                if not any((
+                    fn.startswith('_sidebar'),
+                    ext not in ['.md'],  # 仅针对md
+                    os.stat(file).st_mtime > time.time() - 1800,  # 修改中
+                )):
+                    # print(f'Format: {fn}')
+                    auto_format_file(file, all_backup_files)
 
     # 其它情况
     elif os.path.exists(target):
@@ -103,4 +105,5 @@ def auto_format(*path):
 
 if __name__ == '__main__':
 
+    # auto_format()
     fire.Fire(auto_format)
