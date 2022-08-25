@@ -6,14 +6,14 @@ __author__ = 'Erimus'
 # TODO: 考虑兼容其他站点的封面 但目前用不上
 
 import webbrowser
-from erimus.toolbox import readClip, request, re
+from erimus.toolbox import read_clip, request, re
 
 # ═══════════════════════════════════════════════
 
 
 def get_netease_cloud_music_cover(url=None):
     if url is None:
-        url = readClip()
+        url = read_clip()
     print(f'{url = }')
     body = request(url)
     # print(f'{body = }')

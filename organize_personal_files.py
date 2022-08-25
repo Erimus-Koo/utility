@@ -30,11 +30,12 @@ SETTINGS_IN_SEPARATE = {
     'mskeyboard': 'D:/system/Documents/Microsoft Hardware/Macros/end.mhm',
     # 'musicbee': os.path.join(APPDATA, 'MusicBee/MusicBee3Settings.ini'),
     'musicbee': 'D:/Program Files/MusicBee/AppData/MusicBee3Settings.ini',
+    'powershell': 'D:/system/documents/PowerShell/Microsoft.PowerShell_profile.ps1',
     'setpoint': os.path.join(APPDATA, 'Logitech/SetPoint/user.xml'),
     # 'snipaste': 'D:/Program Files/Snipaste/config.ini',
     'totalcmd': 'D:/Program Files/TotalCMD64/Wincmd.ini',
     'totalcmd-usercmd': 'D:/Program Files/TotalCMD64/usercmd.ini',
-    'typora': os.path.join(APPDATA, 'Typora/themes/typora-erimus.css'),
+    # 'typora': os.path.join(APPDATA, 'Typora/themes/typora-erimus.css'),
     'xnview': os.path.join(APPDATA, 'XnViewMP/xnview.ini'),
     'xnview-bookmark': os.path.join(APPDATA, 'XnViewMP/bookmark.ini'),
 }

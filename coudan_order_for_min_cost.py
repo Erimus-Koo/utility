@@ -27,7 +27,7 @@ class Order():
             # 如果当前价格超了 就不再增加数量
             if thisPrice >= self.targetPrice:
                 self.r[thisOrder.strip('+ ')] = thisPrice
-                [log.debug(f'>>> {k} = {v}') for k,v in self.r.items()]
+                [log.debug(f'>>> {k} = {v}') for k, v in self.r.items()]
                 return
 
             # 如果价格没超 就往下一位
@@ -59,8 +59,8 @@ if __name__ == '__main__':
 
     # log.basicConfig(level=log.DEBUG, format=('pid:%(process)d | %(message)s'))
 
-    itemList = {'鸡胸': 29.8, '鸡腿': 18.8, '麦片': 24.8}
-    targetPrice = 198  # 目标价格（满减/包邮/等）
+    itemList = {'短裤': 59, 'T1': 44, 'T2': 39}
+    targetPrice = 300  # 目标价格（满减/包邮/等）
 
     minOrder = Order(itemList, targetPrice)
     minOrder.calc()

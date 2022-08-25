@@ -46,6 +46,22 @@ def gym_timer(gap=30, limit=20, start=None):
         time.sleep(10)  # 避免最後的語音被打斷
 
 
+def gym_plus_one():
+    # 读取记录
+    with open(ONLINE_LOG, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+    date = formatTime(fmt='date')
+    data[date] = data.get(date, 0) + 1
+
+    # 写入数据
+    with open(ONLINE_LOG, 'w', encoding='utf-8') as f:
+        f.write(json.dumps(data, ensure_ascii=False, indent=2))
+
+    # sync to cos
+    ERIMUS_CC.upload('misc/gym.log')
+    say(f'第 {data[date]} 次')
+
+
 # ═══════════════════════════════════════════════
 
 

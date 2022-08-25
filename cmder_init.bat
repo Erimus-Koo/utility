@@ -1,12 +1,11 @@
-@echo off
+rem @echo off
 
 set cmder="D:\Program Files\cmder\Cmder.exe"
 
 rem 健身
-%cmder% /single /start "D:\OneDrive\05ProgramProject\Python\"
+%cmder% /single /start "G:\Downloads\"
 
-rem 股票采集
-%cmder% /single /start "D:\OneDrive\05ProgramProject\Python\Spider\stock"
+rem 常驻任务
+%cmder%  /x -t=Autorun /single /start "D:\OneDrive\05ProgramProject\Python\"
 
-rem 模拟器
-%cmder% /single /start "D:\OneDrive\05ProgramProject\Python\autoplay\clash_royale"
+rem python D:\OneDrive\05ProgramProject\Python\utilities\share\autorun.py

@@ -15,14 +15,17 @@ import psutil
 import time
 from util.kill_process import kill_process
 from util.windows_keep_awake import keep_awake_on, keep_awake_off
+from util.gym_timer import gym_plus_one
 from erimus.homeassistant_restapi import turn, state
 
 # ═══════════════════════════════════════════════
 pyautogui.FAILSAFE = False  # screen off keep working
 software_dict = {
-    'musicbee': r'"D:\Program Files\MusicBee\MusicBee.exe"',
-    'cloudmusic': r'"C:\Program Files (x86)\Netease\CloudMusic\cloudmusic.exe"',
+    'musicbee': r'D:\Program Files\MusicBee\MusicBee.exe',
+    'cloudmusic': r'C:\Program Files (x86)\Netease\CloudMusic\cloudmusic.exe',
+    'spotify': r'C:\Users\chuan\AppData\Roaming\Spotify\Spotify.exe',
 }
+musicplayer = 'cloudmusic'
 # ═══════════════════════════════════════════════
 
 
@@ -59,9 +62,10 @@ def process_exists(pname):
 # 立刻锁屏
 def screen_off():
     keep_awake_off()
-    for _process in ['potplayer', 'cloudmusic']:
+    for _process in ['potplayer', 'cloudmusic', 'spotify', 'musicbee',
+                     'firefox']:
         kill_process(_process)
-    os.popen('nircmd monitor off')  # 息屏
+    # os.popen('nircmd monitor off')  # 息屏
 
 
 # ═══════════════════════════════════════════════
@@ -88,6 +92,8 @@ def rest_api(environ, start_response):
     # 开启软件部分
     if 'open' in params:
         software = params['open'].lower()
+        if software == 'musicplayer':
+            software = musicplayer
         if software in software_dict:
             if process_exists(software):
                 msg += f'[{software}] is already running.'
@@ -103,10 +109,11 @@ def rest_api(environ, start_response):
     # 运行命令
     if 'run' in params:
         cmd = params['run'].lower()
+        args = []
         if '(' and ')' in cmd:
             cmd, args = cmd.split('(')
             args = [p.strip() for p in args.replace(')', '').split(',')]
-            print(f'{cmd = } | {args = }')
+        print(f'{cmd = } | {args = }')
         try:
             r = eval(cmd)(*args)
             if r:

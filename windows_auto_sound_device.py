@@ -67,7 +67,8 @@ def auto_sound_device_control():
             if ALERT_LIMIT <= gap < ALERT_LIMIT + INTERVAL:
                 say('功放即将被关闭')
 
-            if gap > MUTE_LIMIT and DEVICE_STATUS != False:
+            if all((MUTE_LIMIT < gap < MUTE_LIMIT + INTERVAL,
+                    DEVICE_STATUS != False)):
                 turn('off', 'switch.amplifier_smart')
                 turn('off', 'input_boolean.playing_sound')
                 DEVICE_STATUS = False
@@ -75,10 +76,12 @@ def auto_sound_device_control():
                 keep_awake_off()
                 os.system('nircmd.exe monitor off')
 
-            if gap > MONITOR_OFF_LIMIT and MONITOR_STATUS != False:
-                turn('off', 'switch.monitor')
+            if all((MONITOR_OFF_LIMIT < gap, MONITOR_STATUS != False)):
                 MONITOR_STATUS = False
-                log.info(CSS('Trun off the monitor.'))
+                # 如果间隔太久，则可能是机器刚从休眠中复活，这时无需关闭。
+                if gap < MONITOR_OFF_LIMIT + INTERVAL:
+                    turn('off', 'switch.monitor')
+                    log.info(CSS('Trun off the monitor.'))
 
         elif now_playing is None:  # 发生意外
             log.warning('WARNING: Can not get the status of sound playing!')

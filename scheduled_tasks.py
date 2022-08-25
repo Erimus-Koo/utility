@@ -10,7 +10,8 @@ from erimus.toolbox import *
 ROOT = PYTHON_ROOT
 ERIMUS = MODULE_ERIMUS
 UTIL = MODULE_UTIL
-GAP = 600  # 运行间隔
+GAP_MIN = 10  # 运行间隔 minute
+GAP = GAP_MIN * 60
 PID = os.getpid()
 # ═══════════════════════════════════════════════
 
@@ -30,23 +31,25 @@ def run_cmd(name, _cmd):  # 套壳会导致python进程多一层 后台看着有
 def scheduled_tasks():
     while True:
         print(f'[{CSS(PID)}] Scheduled Task')
-        ts = timestamp()
-        task_dict = {}
+        dt = dTime()
         td = {}  # task dict
 
         # 每十分钟运行一次
-        if ts % GAP < GAP / 2:
-            td['clean'] = cmd(UTIL, 'organize_personal_files')
+        td['clean'] = cmd(UTIL, 'organize_personal_files')
 
         # 每小时运行一次
-        if ts % 3600 < GAP:
+        if dt.minute < GAP_MIN:  # 前10分钟
             td['docsify sidebar'] = cmd(UTIL, 'generate_docsify_sidebar')
             td['格式化笔记'] = cmd(UTIL, 'auto_format')
             td['同步笔记'] = cmd(ERIMUS, r'qcloud\erimuscc', 'notebook')
 
         # 每4小时运行一次
-        if ts % (3600 * 6) < GAP:
+        if dt.hour % 4 == 0 and dt.minute < GAP_MIN:
             td['订阅内容'] = cmd(ROOT, r'Spider\entertainment\update_all')
+
+        # 每天8点闹钟
+        if dt.hour == 8 and dt.minute < GAP_MIN:
+            td['闹钟'] = cmd(ROOT, r'music_alarm\music_alarm')
 
         # 运行命令队列
         for name, _cmd in td.items():

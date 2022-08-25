@@ -19,7 +19,8 @@ def save_as(file, fmt, qlt=80, force_resave=False,
         return
     try:  # Auto Rotate. 274 is the exif id of orientation
         orient = dict(img._getexif().items()).get(274)
-        if orient in (ro_dict:={3: 180, 6: 270, 8: 90}):
+        ro_dict = {3: 180, 6: 270, 8: 90}
+        if orient in ro_dict:
             img = img.rotate(ro_dict[orient], expand=True)
     except Exception:
         pass
