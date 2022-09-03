@@ -69,7 +69,7 @@ def trim_video(src_file=None, *clip_points, merge=True):
     saved = SaveInput(file_name)
     if saved.log:
         use_saved = input(f'Find saved clip points:\n{saved.log}\n(y/n):')
-        if use_saved.lower() == 'y':
+        if use_saved.lower() in ['y', '']:
             clip_points = saved.log.split(' ')
         elif use_saved.lower() == 'n':
             clip_points = []
@@ -116,8 +116,7 @@ def trim_video(src_file=None, *clip_points, merge=True):
         et = fmt_time(end)
         duration = str(et - st)
         print(f'{DL}{duration=}')
-        trim_file = os.path.join(path,
-                                 f'{file_name}_trim{i}{ext}')
+        trim_file = os.path.join(path, f'{file_name}_trim{i}{ext}')
         videoList.append(trim_file)
         trimCmd = (f'ffmpeg -ss {start} -t {duration} -i "{src_file}"'
                    f' -vcodec copy -acodec copy "{trim_file}"')
@@ -151,7 +150,6 @@ def merge_video(videoList, out_file, removeSrc=False):
 
 
 # ═══════════════════════════════════════════════
-
 
 if __name__ == '__main__':
 
