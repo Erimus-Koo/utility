@@ -75,7 +75,8 @@ def trim_video(src_file=None, *clip_points, merge=True):
             clip_points = []
         else:
             clip_points = [p for p in use_saved.split(' ') if p]
-    print(f'Loaded: {clip_points = }')
+    print('Loaded:')
+    [print(clip_points[i:i + 2]) for i in range(0, len(clip_points), 2)]
 
     # 输入切割点
     clip_points = clip_points or []
