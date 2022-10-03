@@ -7,13 +7,18 @@ from webdriver_manager.chrome import ChromeDriverManager
 import requests
 import os
 import re
+import sys
 import shutil
 
 # ═══════════════════════════════════════════════
 ver_dict = {
-    'win32': '/Users/erimus/OneDrive/Misc/path',
-    'mac64': '/Users/erimus/OneDrive/Misc/path',
-    'mac64_m1': '/Users/erimus/path',
+    # windowsx 下载一种驱动
+    'win32': [['win32', 'D:/OneDrive/Misc/path']],
+    # mac 下载两种
+    'darwin': [
+        ['mac64', '/Users/erimus/OneDrive/Misc/path'],
+        ['mac64_m1', '/Users/erimus/path'],
+    ],
 }
 # ═══════════════════════════════════════════════
 
@@ -28,8 +33,7 @@ def update_chrome_driver(name, drv_path):
     res = requests.get(url="https://chromedriver.storage.googleapis.com")
     content = res.text
     ver_list = re.search(
-        f'({main_ver}.\\d+.\\d+.\\d+)/chromedriver_{name}.zip',
-        content, re.S)
+        f'({main_ver}.\\d+.\\d+.\\d+)/chromedriver_{name}.zip', content, re.S)
     if ver_list is None:
         print(f'Not found ver [{main_ver}]')
         return
@@ -43,16 +47,14 @@ def update_chrome_driver(name, drv_path):
     print(f'{install_path = }')
 
     folders = install_path.split(os.path.sep)
-    for name, path in ver_dict.items():
-        if name in folders:
-            _, fn = os.path.split(install_path)
-            dst_path = os.path.join(path, fn)
-            shutil.copy(install_path, dst_path)
-            print(f'src: {install_path}\ndst: {dst_path}')
-            break
+    _, fn = os.path.split(install_path)
+    dst_path = os.path.join(drv_path, fn)
+    shutil.copy(install_path, dst_path)
+    print(f'src: {install_path}\ndst: {dst_path}')
 
 
 # ═══════════════════════════════════════════════
 if __name__ == '__main__':
 
-    update_chrome_driver('mac64_m1', '/Users/erimus/path')
+    for name, drv_path in ver_dict[sys.platform]:
+        update_chrome_driver(name, drv_path)
