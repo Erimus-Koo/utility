@@ -6,7 +6,7 @@ __author__ = 'Erimus'
 # export '_sidebar.md' & '_sidebar_private.md', toggle by some private key.
 
 import os
-from urllib.parse import quote, unquote
+from urllib.parse import quote
 
 # ═══════════════════════════════════════════════
 
@@ -29,11 +29,11 @@ def update_file(file, content):
 
 
 def add_content(fullpath, root):
-    print(f'add content: {fullpath}')
+    # print(f'add content: {fullpath}')
 
     # calculate indent
     relative_path = fullpath.replace('\\', '/')[len(root):].lstrip('/')
-    print(f'{relative_path = }')
+    # print(f'{relative_path = }')
     indent = relative_path.count('/') * '    '  # indent level
     levels = f'/{relative_path}'.split('/')  # per folder in path
 
@@ -44,7 +44,7 @@ def add_content(fullpath, root):
     filename = levels[-1]
     # replace '_' with space in sidebar
     filename = filename[0] + filename[1:].replace('_', ' ')
-    print(f'{filename = }')
+    # print(f'{filename = }')
 
     # skip sidebar file
     if filename.startswith('_sidebar') and fullpath.endswith('.md'):
@@ -66,13 +66,13 @@ def add_content(fullpath, root):
             _type = 'private'
             break
 
-    print(f'{_type = } | {line}')
+    # print(f'{_type = } | {line}')
     return _type, line
 
 
 def generate_sidebar(root=None, ignoreFolders=None):
     ignoreFolders = [] if ignoreFolders is None else ignoreFolders
-    ignoreFolders += ['.git']
+    ignoreFolders += ['.git', '.obsidian']
     if root is None:
         root = os.getcwd()  # the path of command line
 
@@ -94,7 +94,7 @@ def generate_sidebar(root=None, ignoreFolders=None):
         # add file to menu
         for fn in files:
             if fn.endswith('md'):
-                print(f'===\n{fn = }')
+                # print(f'===\n{fn = }')
                 # generate sidebar
                 _type, line = add_content(os.path.join(path, fn), root)
                 if _type in ['public', 'private']:
@@ -115,6 +115,6 @@ if __name__ == '__main__':
     DOCSIFY_ROOT = 'D:/OneDrive/site/notebook'
     for root, ignoreFolders in [
         [DOCSIFY_ROOT, ['shanghaitong']],  # docsify root
-        # [DOCSIFY_ROOT + '/shanghaitong', []]  # 上海地方志
+            # [DOCSIFY_ROOT + '/shanghaitong', []]  # 上海地方志
     ]:
         generate_sidebar(root, ignoreFolders)

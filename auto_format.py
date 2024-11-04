@@ -63,7 +63,8 @@ def auto_format_file(src, all_backup_files=None):
         print(f'Save a backup as: {backup}')
 
     # format & overwrite
-    os.system(f'prettier "{src}" --write --tab-width 4')
+    # 用iCloud同步notebook目录 所以需要保持LF换行
+    os.system(f'prettier "{src}" --end-of-line lf --write')
 
 
 def auto_format(*path):
@@ -87,9 +88,9 @@ def auto_format(*path):
                 name, ext = os.path.splitext(fn)
                 file = os.path.join(path, fn)  # full path
                 if not any((
-                    fn.startswith('_sidebar'),
-                    ext not in ['.md'],  # 仅针对md
-                    os.stat(file).st_mtime > time.time() - 1800,  # 修改中
+                        fn.startswith('_sidebar'),
+                        ext not in ['.md'],  # 仅针对md
+                        os.stat(file).st_mtime > time.time() - 1800,  # 修改中
                 )):
                     # print(f'Format: {fn}')
                     auto_format_file(file, all_backup_files)

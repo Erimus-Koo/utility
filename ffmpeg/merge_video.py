@@ -20,7 +20,7 @@ def merge_video(root=None):
     for path, dirs, files in os.walk(video_root):  # read all files
         for fn in files:
             name, ext = os.path.splitext(fn)
-            if ext not in ('.mp4', '.webm', '.flv', '.ts'):
+            if ext.lower() not in ('.mp4', '.webm', '.flv', '.ts'):
                 continue
             if out_file is None:
                 out_file = os.path.join(path, name + '_merge' + ext)
@@ -48,7 +48,6 @@ def merge_video(root=None):
 
 
 # ═══════════════════════════════════════════════
-
 
 if __name__ == '__main__':
 

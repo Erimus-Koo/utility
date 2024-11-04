@@ -15,7 +15,7 @@ def volume_up(*args):
     if not args:
         src_file = pyperclip.paste()  # 没有输入的话直接读取剪贴板
         volume = '20dB'
-    elif args[0].isdigit():
+    elif str(args[0]).isdigit():
         src_file = pyperclip.paste()  # 没有输入的话直接读取剪贴板
         volume = f'{args[0]}dB'
     else:
@@ -33,7 +33,6 @@ def volume_up(*args):
 
 
 # ═══════════════════════════════════════════════
-
 
 if __name__ == '__main__':
 

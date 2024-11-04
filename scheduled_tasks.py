@@ -5,7 +5,6 @@ __author__ = 'Erimus'
 # 因为要作为autorun的子进程，所以内部不能再使用多进程。
 
 from erimus.toolbox import *
-
 # ═══════════════════════════════════════════════
 ROOT = PYTHON_ROOT
 ERIMUS = MODULE_ERIMUS
@@ -36,12 +35,14 @@ def scheduled_tasks():
 
         # 每十分钟运行一次
         td['clean'] = cmd(UTIL, 'organize_personal_files')
+        td['rename'] = cmd(PYTHON_ROOT, 'av_package/file_operation')
 
         # 每小时运行一次
         if dt.minute < GAP_MIN:  # 前10分钟
-            td['docsify sidebar'] = cmd(UTIL, 'generate_docsify_sidebar')
-            td['格式化笔记'] = cmd(UTIL, 'auto_format')
-            td['同步笔记'] = cmd(ERIMUS, r'qcloud\erimuscc', 'notebook')
+            # td['docsify sidebar'] = cmd(UTIL, 'generate_docsify_sidebar')
+            # td['格式化笔记'] = cmd(UTIL, 'auto_format')
+            # td['同步笔记'] = cmd(ERIMUS, r'qcloud\erimuscc', 'notebook')
+            td['备份dotfile'] = cmd(ROOT, 'backup_dotfile/backup_dotfile.py')
 
         # 每4小时运行一次
         if dt.hour % 4 == 0 and dt.minute < GAP_MIN:

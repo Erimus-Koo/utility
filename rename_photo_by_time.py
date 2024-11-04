@@ -16,7 +16,8 @@ import re
 
 
 def format_time_str(t):
-    return t.replace(':', '').replace('-', '').replace(' ', '_').replace('T', '_')
+    return t.replace(':', '').replace('-', '').replace(' ',
+                                                       '_').replace('T', '_')
 
 
 def ts2str(ts):
@@ -52,28 +53,35 @@ def rename_photo_by_time(root):
             # [print(f'{k}: {ts2str(v)}') for k, v in t.items()]
 
             # read exif
-            fd = open(file, 'rb')
-            tags = exifread.process_file(fd)
-            # [print(t, v) for t, v in tags.items()]
-            fd.close()
+            # live photo 会加载失败
+            try:
+                fd = open(file, 'rb')
+                tags = exifread.process_file(fd)
+                # [print(t, v) for t, v in tags.items()]
+                fd.close()
 
-            # [print(f'{k}: {v}') for k, v in tags.items()]
-            if 'Image DateTime' in tags:
-                t['stime'] = format_time_str(str(tags['Image DateTime']))
-            if 'EXIF DateTimeOriginal' in tags:
-                t['otime'] = format_time_str(tags['EXIF DateTimeOriginal'].values)
-            t['dtime'] = ts2str(tags.get('DateTimeDigitized', time.time()))
+                # [print(f'{k}: {v}') for k, v in tags.items()]
+                if 'Image DateTime' in tags:
+                    t['stime'] = format_time_str(str(tags['Image DateTime']))
+                if 'EXIF DateTimeOriginal' in tags:
+                    t['otime'] = format_time_str(
+                        tags['EXIF DateTimeOriginal'].values)
+                t['dtime'] = ts2str(tags.get('DateTimeDigitized', time.time()))
+            except Exception as e:
+                print('Error:', e)
 
             # read metadata
             with open(file, 'rb') as f:
                 try:  # 视频过大时会无法加载
-                    rr = re.findall(r'\d{4}[:\-]\d{2}[:\-]\d{2}[T ]\d{2}[:\-]\d{2}[:\-]\d{2}', str(f.read()))
+                    rr = re.findall(
+                        r'\d{4}[:\-]\d{2}[:\-]\d{2}[T ]\d{2}[:\-]\d{2}[:\-]\d{2}',
+                        str(f.read()))
                     for i, iptct in enumerate(rr):
                         t[f'iptc{i}'] = format_time_str(iptct)
                 except OverflowError as e:
                     print(e)
 
-            [print(f'  {k}: {v}') for k,v in t.items()]
+            [print(f'  {k}: {v}') for k, v in t.items()]
             newName = min(t.values())  # most early
 
             # 同名文件自动加后缀
@@ -98,7 +106,6 @@ def rename_photo_by_time(root):
 
 
 # ═══════════════════════════════════════════════
-
 
 if __name__ == '__main__':
 

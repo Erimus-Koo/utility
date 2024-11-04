@@ -10,33 +10,33 @@ import sys
 import cgi
 from wsgiref.simple_server import make_server
 import pyautogui
-import subprocess
+# import subprocess
 import psutil
-import time
+# import time
 from util.kill_process import kill_process
-from util.windows_keep_awake import keep_awake_on, keep_awake_off
-from util.gym_timer import gym_plus_one
+from util.windows_keep_awake import keep_awake_off
+# from util.gym_timer import gym_plus_one
 from erimus.homeassistant_restapi import turn, state
 
 # ═══════════════════════════════════════════════
 pyautogui.FAILSAFE = False  # screen off keep working
 software_dict = {
-    'musicbee': r'D:\Program Files\MusicBee\MusicBee.exe',
-    'cloudmusic': r'C:\Program Files (x86)\Netease\CloudMusic\cloudmusic.exe',
-    'spotify': r'C:\Users\chuan\AppData\Roaming\Spotify\Spotify.exe',
+    'musicbee': 'D:/Program Files/MusicBee/MusicBee.exe',
+    'cloudmusic': 'C:/Program Files (x86)/Netease/CloudMusic/cloudmusic.exe',
+    'spotify': 'C:/Users/chuan/AppData/Roaming/Spotify/Spotify.exe',
 }
-musicplayer = 'cloudmusic'
+musicplayer = 'spotify'
 # ═══════════════════════════════════════════════
 
 
 class PathDispatcher:
+
     def __init__(self):
         self.pathmap = {}
 
     def __call__(self, environ, start_response):
         path = environ['PATH_INFO']
-        params = cgi.FieldStorage(environ['wsgi.input'],
-                                  environ=environ)
+        params = cgi.FieldStorage(environ['wsgi.input'], environ=environ)
         method = environ['REQUEST_METHOD'].lower()
         environ['params'] = {key: params.getvalue(key) for key in params}
         handler = self.pathmap.get((method, path), notfound_404)
@@ -62,8 +62,9 @@ def process_exists(pname):
 # 立刻锁屏
 def screen_off():
     keep_awake_off()
-    for _process in ['potplayer', 'cloudmusic', 'spotify', 'musicbee',
-                     'firefox']:
+    for _process in [
+            'potplayer', 'cloudmusic', 'spotify', 'musicbee', 'firefox'
+    ]:
         kill_process(_process)
     # os.popen('nircmd monitor off')  # 息屏
 
@@ -183,7 +184,7 @@ Default port 8836, you can define port with argument.
 # ═══════════════════════════════════════════════
 
 
-def init_server(port=8836):
+def init_server(port: int = 8836):
     # Create the dispatcher and register functions
     dispatcher = PathDispatcher()
     dispatcher.register('GET', '/api', rest_api)
@@ -196,8 +197,7 @@ def init_server(port=8836):
 
 # ═══════════════════════════════════════════════
 
-
 if __name__ == '__main__':
 
-    port = 8836 if len(sys.argv) == 1 else sys.argv[1]
+    port = 8836 if len(sys.argv) == 1 else int(sys.argv[1])
     init_server(port)

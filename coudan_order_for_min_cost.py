@@ -32,7 +32,9 @@ class Order():
 
             # 如果价格没超 就往下一位
             if len(itemList) > 1:
-                self.orderNum(itemList[1:], prevOrder=thisOrder, prevPrice=thisPrice)
+                self.orderNum(itemList[1:],
+                              prevOrder=thisOrder,
+                              prevPrice=thisPrice)
 
     def calc(self):
         # 格式化商品数据
@@ -59,8 +61,8 @@ if __name__ == '__main__':
 
     # log.basicConfig(level=log.DEBUG, format=('pid:%(process)d | %(message)s'))
 
-    itemList = {'短裤': 59, 'T1': 44, 'T2': 39}
-    targetPrice = 300  # 目标价格（满减/包邮/等）
+    itemList = {'肉': 8.94, '腿': 11.3, '土豆': 3.2, '豆腐': 2.6}
+    targetPrice = 84  # 目标价格（满减/包邮/等）
 
     minOrder = Order(itemList, targetPrice)
     minOrder.calc()

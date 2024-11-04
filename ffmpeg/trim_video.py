@@ -119,8 +119,9 @@ def trim_video(src_file=None, *clip_points, merge=True):
         print(f'{DL}{duration=}')
         trim_file = os.path.join(path, f'{file_name}_trim{i}{ext}')
         videoList.append(trim_file)
-        trimCmd = (f'ffmpeg -ss {start} -t {duration} -i "{src_file}"'
-                   f' -vcodec copy -acodec copy "{trim_file}"')
+        trimCmd = (
+            f'ffmpeg -ss {start} -t {duration} -i "{src_file}"'
+            f' -vcodec copy -acodec copy -reset_timestamps 1 "{trim_file}"')
         print(f'{trimCmd = }{DL}')
         os.system(trimCmd)
 
