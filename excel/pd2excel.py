@@ -45,7 +45,6 @@ LETTER_WIDTH = 1.25
 DL = '\n' + '-' * 30 + '\n'
 # ═══════════════════════════════════════════════ archive
 
-
 # col转datetime 并转为excel中的数字型日期
 # def convert_col_to_datetime(df, col):
 #     df[col] = pd.to_datetime(df[col])
@@ -61,12 +60,11 @@ DL = '\n' + '-' * 30 + '\n'
 #         datetime_dict[col] = 'datetime'
 #     log.debug(f'[{col}] --> {datetime_dict[col]}')
 
-
 # ═══════════════════════════════════════════════
 
 
 def deal_with_sheet(writer, sheet_name, data, index=None):
-    print(f'{DL}{sheet_name = }')
+    # print(f'{DL}{sheet_name = }')
     # valid sheetname
     sheet_name = re.sub(r'[\\\/\*\?\:\[\]]', '_', sheet_name)
 
@@ -94,7 +92,7 @@ def deal_with_sheet(writer, sheet_name, data, index=None):
     df = df.convert_dtypes()
     for i, col in enumerate(df.columns):
         if str(src_dtypes[i]) != str(df[col].dtype):
-            log.info(f'{col:<15s} {src_dtypes[i]} --> {df[col].dtype}')
+            log.debug(f'{col:<15s} {src_dtypes[i]} --> {df[col].dtype}')
 
     # 如果index是递增数字 则不输出index
     log.debug(f'{DL}Check index{DL}')
@@ -115,7 +113,6 @@ def deal_with_sheet(writer, sheet_name, data, index=None):
     df.to_excel(writer, sheet_name=sheet_name, index=False)
     workbook = writer.book
     worksheet = writer.sheets[sheet_name]
-
     '''
     日期时间加格式有两种方式
     1. 转为字符串，不然后面设不上格式。缺点是会丢失应有的格式。
@@ -132,13 +129,13 @@ def deal_with_sheet(writer, sheet_name, data, index=None):
         r.setdefault(col, {'col': col})
         r[col]['old'] = df[col].dtype
         if not any((
-            pd.api.types.is_numeric_dtype(df[col]),
-            pd.api.types.is_string_dtype(df[col]),  # object --> true
+                pd.api.types.is_numeric_dtype(df[col]),
+                pd.api.types.is_string_dtype(df[col]),  # object --> true
         )):  # or pd.api.types.is_object_dtype(df[col]):
             df[col] = df[col].astype(str)  # --> object
             if all([is_int(c) for c in df[col] if c != ''][:-1]):
-                df[col] = df[col].apply(
-                    lambda x: x[:-2] if x.endswith('.0') else x)
+                df[col] = df[col].apply(lambda x: x[:-2]
+                                        if x.endswith('.0') else x)
                 df[col] = df[col].astype(int, errors='ignore')
                 print(f'{df[col] = }')
                 convert_info = '--> str --> int'
@@ -152,9 +149,13 @@ def deal_with_sheet(writer, sheet_name, data, index=None):
         log.debug(f'{col:<15s} {df[col].dtype} {convert_info}')
 
     # 把表作为工作表
-    worksheet.add_table(0, 0, df.shape[0], df.shape[1] - 1,
-                        {'columns': [{'header': col} for col in df.columns],
-                         'style': 'Table Style Medium 1'})
+    worksheet.add_table(
+        0, 0, df.shape[0], df.shape[1] - 1, {
+            'columns': [{
+                'header': col
+            } for col in df.columns],
+            'style': 'Table Style Medium 1'
+        })
     worksheet.set_default_row(hide_unused_rows=False)  # 不要自动隐藏
 
     # header format
@@ -167,17 +168,15 @@ def deal_with_sheet(writer, sheet_name, data, index=None):
     log.debug(f'{DL}Auto column width{DL}')
     column_width_dict = {}
     for col_i, col in enumerate(df.columns):
-        log.debug(f'{DL}[{col}]\n{df[col][:3]}')
+        log.debug(f'{DL}[{col}]\n{df[col].loc[:3]}')
         data_type = 'str'  # default
 
         # log.debug(f"[{col}]\n{[c for c in df[col] if c != '']}\n{[is_int(c) for c in df[col] if c != '']}")
         if any((pd.api.types.is_integer_dtype(df[col]),
-                all([is_int(c) for c in df[col] if c != ''][:-1])
-                )):  # 整数
+                all([is_int(c) for c in df[col] if c != ''][:-1]))):  # 整数
             data_type = 'int'
         elif any((pd.api.types.is_float_dtype(df[col]),
-                  all([is_float(c) for c in df[col] if c != ''][:-1])
-                  )):  # 小数
+                  all([is_float(c) for c in df[col] if c != ''][:-1]))):  # 小数
             data_type = 'float'
             if col.endswith(('率', '百分比', '占比')):
                 data_type = 'percentage'
@@ -200,12 +199,15 @@ def deal_with_sheet(writer, sheet_name, data, index=None):
                 this_fmt['num_format'] = NUM_DICT[data_type]
 
         # 计算列宽
-        header_len = (real_len(col) + 2) / 2  # add some space for filter button
+        header_len = (real_len(col) +
+                      2) / 2  # add some space for filter button
         if data_type in NUM_DICT:
             if data_type == 'float':
-                max_len = df[col].map(lambda x: str_round(x, 2)).map(str).map(len).max()
+                max_len = df[col].map(lambda x: str_round(x, 2)).map(str).map(
+                    len).max()
             elif data_type == 'percentage':
-                max_len = df[col].map(lambda x: str_round(x, 4)).map(str).map(len).max()
+                max_len = df[col].map(lambda x: str_round(x, 4)).map(str).map(
+                    len).max()
             else:
                 max_len = df[col].map(str).map(len).max()
         else:
@@ -226,11 +228,11 @@ def deal_with_sheet(writer, sheet_name, data, index=None):
         column_width_dict[col] = col_width
 
     # print result
-    # [log.info(f'{v:>5.2f} | {k}') for k, v in column_width_dict.items()]
+    # [log.debug(f'{v:>5.2f} | {k}') for k, v in column_width_dict.items()]
     rdf = pd.DataFrame(list(r.values()))
     rdf = rdf[['col', 'idx', 'old', 'new', 'width']]
     rdf.set_index('col', inplace=True)
-    log.info(f'{DL}{rdf}{DL}')
+    log.debug(f'{DL}{rdf}{DL}')
 
     # 设定行高避免过高
     log.debug(f'{DL}Auto row height{DL}')
@@ -244,8 +246,8 @@ def deal_with_sheet(writer, sheet_name, data, index=None):
             worksheet.set_row(0, 50, header_format)  # 50大概是3行行高
         # 表格内容
         for col in df.columns:
-            lines = (real_len(str(row[col])) * LETTER_WIDTH
-                     / column_width_dict[col])
+            lines = (real_len(str(row[col])) * LETTER_WIDTH /
+                     column_width_dict[col])
             max_lines = max(max_lines, lines)
         if max_lines > 3:
             worksheet.set_row(row_i + 1, 50)  # 50大概是3行行高
@@ -259,7 +261,9 @@ def save_excel(data, output, *, index=None):
     writer = pd.ExcelWriter(output, engine='xlsxwriter')
     for sheet_name, df in data.items():
         writer = deal_with_sheet(writer, sheet_name, df, index=index)
-    writer.save()
+
+    writer.close()
+    print(f'💾 Saved: {output}')
 
 
 # ═══════════════════════════════════════════════
@@ -333,8 +337,9 @@ def is_num_like(cell):
 
 
 def main(input_content):
-    if all((os.path.isfile(input_content),
-            input_content.endswith(('xls', 'xlsx')))):
+    if all(
+        (os.path.isfile(input_content), input_content.endswith(
+            ('xls', 'xlsx')))):
         wb = pd.ExcelFile(input_content).book
         if len(wb.sheetnames) > 1:
             log.warning(f'Single sheet support only, bye.')
@@ -357,7 +362,10 @@ def main(input_content):
         else:
             print(f'Auto detect header failed. {header = }')
 
-        df = pd.read_excel(input_content, header=[header], )
+        df = pd.read_excel(
+            input_content,
+            header=[header],
+        )
         file, ext = os.path.splitext(input_content)
         output = f'{file}_formatted.xlsx'
         save_excel(df, output, index=None, sheet_name=sheet_name)

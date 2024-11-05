@@ -17,7 +17,7 @@ ver_dict = {
     # mac 下载两种
     'darwin': [
         ['mac64', '/Users/erimus/OneDrive/Misc/path'],
-        ['mac64_m1', '/Users/erimus/path'],
+        ['mac_arm64', '/Users/erimus/path'],
     ],
 }
 # ═══════════════════════════════════════════════
@@ -41,12 +41,10 @@ def update_chrome_driver(name, drv_path):
         available_ver = ver_list.group(1)
 
     print(f'{available_ver = }')
-    # 这里的path参数好像没用 所以自己复制一份到目标位置
-    install_path = ChromeDriverManager(version=available_ver,
-                                       path=drv_path).install()
+    # 这里可以加参数path 其实是在path下再创建`.wdm`目录 所以没有意义
+    install_path = ChromeDriverManager(version=available_ver).install()
     print(f'{install_path = }')
 
-    folders = install_path.split(os.path.sep)
     _, fn = os.path.split(install_path)
     dst_path = os.path.join(drv_path, fn)
     shutil.copy(install_path, dst_path)
@@ -56,5 +54,13 @@ def update_chrome_driver(name, drv_path):
 # ═══════════════════════════════════════════════
 if __name__ == '__main__':
 
-    for name, drv_path in ver_dict[sys.platform]:
-        update_chrome_driver(name, drv_path)
+    # for name, drv_path in ver_dict[sys.platform]:
+    #     update_chrome_driver(name, drv_path)
+
+    install_path = ChromeDriverManager().install()
+    print(f'{install_path = }')
+
+    _, fn = os.path.split(install_path)
+    dst_path = os.path.join('/Users/erimus/path', fn)
+    shutil.copy(install_path, dst_path)
+    print(f'src: {install_path}\ndst: {dst_path}')
